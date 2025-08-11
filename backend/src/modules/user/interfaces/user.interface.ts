@@ -7,7 +7,7 @@ export interface UserInterface {
   lastName: string;
   username: string;
   salt: string;
-  birthDate: string;
-  createdAt: string;
-  updatedAt: string;
+  birthDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -1,6 +1,9 @@
 export interface CreatableUserInterface {
-  username: string;
+  cpf: string;
   email: string;
+  password: string;
   firstName: string;
   lastName: string;
+  username: string;
+  birthDate: Date;
 }

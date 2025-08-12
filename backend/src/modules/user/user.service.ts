@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
@@ -24,6 +28,22 @@ export class UserService {
 
   findAll() {
     return `This action returns all user`;
+  }
+
+  async findOneByEmail(email: string, withPassword: boolean): Promise<UserDTO> {
+    try {
+      const foundUser = await this.repo.findOne({ where: { email: email } });
+
+      if (!foundUser) {
+        throw new NotFoundException();
+      }
+
+      return plainToInstance(UserDTO, foundUser, {
+        groups: withPassword ? ['withPassword'] : [],
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   findOne(id: number) {

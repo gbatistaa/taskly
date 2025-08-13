@@ -1,10 +1,11 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { CryptographyUtils } from '../common/utils/cryptography-utils';
 import { UserDTO } from '../user/dto/user-dto';
 import { UserService } from '../user/user.service';
 import { LoginRequestBodyDTO } from './dto/login-reqbody-dto';
@@ -26,8 +27,13 @@ export class AuthService {
         throw new NotFoundException('User not found');
       }
 
-      if (user.password !== password) {
-        throw new BadRequestException('Invalid creadentials');
+      const isPasswordCorrect = await CryptographyUtils.validateHash(
+        password,
+        user.password,
+        user.salt,
+      );
+      if (!isPasswordCorrect) {
+        throw new UnauthorizedException('Incorrect password');
       }
 
       const payload: Partial<UserDTO> = {
@@ -36,12 +42,12 @@ export class AuthService {
         firstName: user.firstName,
       };
 
-      const newAccessToken = await this.jwtService.signAsync(payload, {
+      const accessToken = await this.jwtService.signAsync(payload, {
         expiresIn: '15m',
       });
 
       return {
-        accessToken: newAccessToken,
+        accessToken,
       };
     } catch (error: unknown) {
       treatKnownErrors(error);

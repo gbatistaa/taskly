@@ -6,7 +6,7 @@ import { LoginRequestBodyDTO } from './dto/login-reqbody-dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @HttpCode(HttpStatus.ACCEPTED)
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() loginDto: LoginRequestBodyDTO) {
     return await this.authService.login(loginDto);

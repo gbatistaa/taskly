@@ -9,7 +9,7 @@ export class UserDTO implements UserInterface {
   @Expose()
   email: string;
 
-  @Expose({ groups: ['showPassword'] })
+  @Expose({ groups: ['withPassword'] })
   password: string;
 
   @Expose()

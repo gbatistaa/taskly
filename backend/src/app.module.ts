@@ -3,12 +3,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { RefreshTokenModule } from './modules/refresh-token/refresh-token.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
     AuthModule,
     UserModule,
+    RefreshTokenModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.HOST ?? 'localhost',

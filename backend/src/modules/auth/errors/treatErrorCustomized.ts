@@ -1,5 +1,5 @@
 import { HttpException } from '@nestjs/common';
-import { postgresErrorMap } from 'src/modules/common/utils/postgresErrorMap';
+import { postgresErrorMap } from 'src/modules/common/utils/postgres-error-map';
 
 export const treatKnownErrors = (error: unknown) => {
   // Treat Http exception errors:

@@ -9,7 +9,7 @@ export class UserDTO implements UserInterface {
   @Expose()
   email: string;
 
-  @Expose({ groups: ['withPassword'] })
+  @Expose({ groups: ['withCredentials'] })
   password: string;
 
   @Expose()
@@ -21,7 +21,9 @@ export class UserDTO implements UserInterface {
   @Expose()
   username: string;
 
+  @Expose({ groups: ['withCredentials'] })
   salt: string;
+
   birthDate: Date;
   createdAt: Date;
   updatedAt: Date;

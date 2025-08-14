@@ -23,10 +23,12 @@ export class AuthService {
       const { email, password } = loginDto;
       const user = await this.userService.findOneByEmail(email, true);
 
+      // User existence middleware:
       if (!user) {
         throw new NotFoundException('User not found');
       }
 
+      // Password validation middleware:
       const isPasswordCorrect = await CryptographyUtils.validateHash(
         password,
         user.password,
@@ -36,18 +38,29 @@ export class AuthService {
         throw new UnauthorizedException('Incorrect password');
       }
 
-      const payload: Partial<UserDTO> = {
+      // Tokens generation business logic:
+      const accessTokenPayload: Partial<UserDTO> = {
         username: user.username,
-        email: user.email,
         firstName: user.firstName,
       };
 
-      const accessToken = await this.jwtService.signAsync(payload, {
+      const refreshTokenPayload: Partial<UserDTO> = {
+        ...accessTokenPayload,
+        lastName: user.lastName,
+      };
+
+      const accessToken = await this.jwtService.signAsync(accessTokenPayload, {
         expiresIn: '15m',
       });
 
+      const refreshToken = await this.jwtService.signAsync(
+        refreshTokenPayload,
+        { expiresIn: '7d' },
+      );
+
       return {
         accessToken,
+        refreshToken,
       };
     } catch (error: unknown) {
       treatKnownErrors(error);

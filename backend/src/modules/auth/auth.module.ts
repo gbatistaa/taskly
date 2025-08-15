@@ -1,9 +1,16 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenModule } from '../refresh-token/refresh-token.module';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { PasswordValidationMiddleware } from './middlewares/password-validation/password-validation.middleware';
+import { UserExistenceMiddleware } from './middlewares/user-existence/user-existence.middleware';
 
 @Module({
   imports: [
@@ -17,4 +24,10 @@ import { AuthService } from './auth.service';
   providers: [AuthService],
   exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserExistenceMiddleware, PasswordValidationMiddleware)
+      .forRoutes({ path: 'auth/login', method: RequestMethod.POST });
+  }
+}

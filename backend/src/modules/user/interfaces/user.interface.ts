@@ -1,5 +1,6 @@
-export interface UserInterface {
-  id: string;
+import { CommonEntityInterface } from 'src/modules/common/interfaces/common.interface';
+
+export interface UserInterface extends CommonEntityInterface {
   cpf: string;
   email: string;
   password: string;
@@ -8,6 +9,4 @@ export interface UserInterface {
   username: string;
   salt: string;
   birthDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
 }

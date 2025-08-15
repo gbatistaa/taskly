@@ -1,12 +1,6 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { Response } from 'express';
-import { CryptographyUtils } from '../common/utils/cryptography-utils';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { UserDTO } from '../user/dto/user-dto';
 import { UserService } from '../user/user.service';
@@ -26,23 +20,8 @@ export class AuthService {
     res: Response,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
-      const { email, password } = loginDto;
+      const { email } = loginDto;
       const user = await this.userService.findOneByEmail(email, true);
-
-      // User existence middleware:
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-
-      // Password validation middleware:
-      const isPasswordCorrect = await CryptographyUtils.validateHash(
-        password,
-        user.password,
-        user.salt,
-      );
-      if (!isPasswordCorrect) {
-        throw new UnauthorizedException('Incorrect password');
-      }
 
       // Tokens generation business logic:
       const accessTokenPayload: Partial<UserDTO> = {

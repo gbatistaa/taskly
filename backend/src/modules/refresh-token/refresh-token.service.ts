@@ -1,11 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { plainToInstance } from 'class-transformer';
+import { Repository } from 'typeorm';
+import { treatKnownErrors } from '../auth/errors/treatErrorCustomized';
 import { CreateRefreshTokenDto } from './dto/create-refresh-token.dto';
-import { UpdateRefreshTokenDto } from './dto/update-refresh-token.dto';
+import { RefreshToken } from './entities/refresh-token.entity';
 
 @Injectable()
 export class RefreshTokenService {
-  create(createRefreshTokenDto: CreateRefreshTokenDto) {
-    return 'This action adds a new refreshToken';
+  constructor(
+    @InjectRepository(RefreshToken) private repo: Repository<RefreshToken>,
+  ) {}
+
+  async create(
+    createRefreshTokenDto: CreateRefreshTokenDto,
+  ): Promise<CreateRefreshTokenDto> {
+    try {
+      const token = this.repo.create(createRefreshTokenDto);
+      const dbToken = await this.repo.save(token);
+
+      return plainToInstance(CreateRefreshTokenDto, dbToken);
+    } catch (error) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException();
+    }
   }
 
   findAll() {
@@ -16,11 +39,21 @@ export class RefreshTokenService {
     return `This action returns a #${id} refreshToken`;
   }
 
-  update(id: number, updateRefreshTokenDto: UpdateRefreshTokenDto) {
-    return `This action updates a #${id} refreshToken`;
-  }
+  async remove(user_id: string) {
+    try {
+      const tokenToRemove = await this.repo.findOne({
+        where: { user_id: user_id },
+      });
 
-  remove(id: number) {
-    return `This action removes a #${id} refreshToken`;
+      if (!tokenToRemove) {
+        throw new NotFoundException('Token does not exist');
+      }
+
+      await this.repo.remove(tokenToRemove);
+    } catch (error) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException();
+    }
   }
 }

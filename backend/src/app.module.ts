@@ -4,13 +4,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { RefreshTokenModule } from './modules/refresh-token/refresh-token.module';
+import { TeamModule } from './modules/team/team.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    AuthModule,
-    UserModule,
-    RefreshTokenModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.HOST ?? 'localhost',
@@ -24,6 +22,10 @@ import { UserModule } from './modules/user/user.module';
       logging: true,
       logger: 'file',
     }),
+    AuthModule,
+    UserModule,
+    RefreshTokenModule,
+    TeamModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -30,7 +30,10 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  async findOneByEmail(email: string, withPassword: boolean): Promise<UserDTO> {
+  async findOneByEmail(
+    email: string,
+    withCredentials: boolean,
+  ): Promise<UserDTO> {
     try {
       const foundUser = await this.repo.findOne({ where: { email: email } });
 
@@ -39,7 +42,7 @@ export class UserService {
       }
 
       return plainToInstance(UserDTO, foundUser, {
-        groups: withPassword ? ['withPassword'] : [],
+        groups: withCredentials ? ['withCredentials'] : [],
       });
     } catch (error) {
       throw new InternalServerErrorException(error);

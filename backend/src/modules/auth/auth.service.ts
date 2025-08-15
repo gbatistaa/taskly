@@ -5,7 +5,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import type { Response } from 'express';
 import { CryptographyUtils } from '../common/utils/cryptography-utils';
+import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { UserDTO } from '../user/dto/user-dto';
 import { UserService } from '../user/user.service';
 import { LoginRequestBodyDTO } from './dto/login-reqbody-dto';
@@ -16,9 +18,13 @@ export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private refreshTokenService: RefreshTokenService,
   ) {}
 
-  async login(loginDto: LoginRequestBodyDTO) {
+  async login(
+    loginDto: LoginRequestBodyDTO,
+    res: Response,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const { email, password } = loginDto;
       const user = await this.userService.findOneByEmail(email, true);
@@ -43,25 +49,36 @@ export class AuthService {
         username: user.username,
         firstName: user.firstName,
       };
-
-      const refreshTokenPayload: Partial<UserDTO> = {
-        ...accessTokenPayload,
-        lastName: user.lastName,
-      };
-
       const accessToken = await this.jwtService.signAsync(accessTokenPayload, {
         expiresIn: '15m',
       });
 
+      res.cookie('access_token', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 1000 * 60 * 60 * 24,
+      });
+
+      // Generate the refresh token:
+      const refreshTokenPayload: Partial<UserDTO> = {
+        ...accessTokenPayload,
+        lastName: user.lastName,
+      };
       const refreshToken = await this.jwtService.signAsync(
         refreshTokenPayload,
         { expiresIn: '7d' },
       );
 
-      return {
-        accessToken,
-        refreshToken,
-      };
+      // Store the refresh token on the database:
+      await this.refreshTokenService.create({
+        user_id: user.id,
+        token_hash: refreshToken,
+      });
+
+      res.status(200).send({ accessToken, refreshToken });
+
+      return { accessToken, refreshToken };
     } catch (error: unknown) {
       treatKnownErrors(error);
 

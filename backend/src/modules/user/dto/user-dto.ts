@@ -3,7 +3,9 @@ import { UserInterface } from '../interfaces/user.interface';
 
 @Exclude()
 export class UserDTO implements UserInterface {
+  @Expose({ groups: ['withCredentials'] })
   id: string;
+
   cpf: string;
 
   @Expose()

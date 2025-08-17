@@ -1,13 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { TeamService } from './team.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
+import { TeamService } from './team.service';
 
 @Controller('team')
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
-  @Post()
+  @Post('create')
   create(@Body() createTeamDto: CreateTeamDto) {
     return this.teamService.create(createTeamDto);
   }

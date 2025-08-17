@@ -51,8 +51,8 @@ export class AuthService {
 
       // Store the refresh token on the database:
       await this.refreshTokenService.create({
-        user_id: user.id,
-        token_hash: refreshToken,
+        userId: user.id,
+        tokenHash: refreshToken,
       });
 
       res.status(200).send({ accessToken, refreshToken });

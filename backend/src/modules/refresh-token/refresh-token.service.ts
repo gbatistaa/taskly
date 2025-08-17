@@ -39,10 +39,10 @@ export class RefreshTokenService {
     return `This action returns a #${id} refreshToken`;
   }
 
-  async remove(user_id: string) {
+  async remove(userId: string) {
     try {
       const tokenToRemove = await this.repo.findOne({
-        where: { user_id: user_id },
+        where: { userId: userId },
       });
 
       if (!tokenToRemove) {

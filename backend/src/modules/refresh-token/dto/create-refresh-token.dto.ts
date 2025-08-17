@@ -3,8 +3,8 @@ import { CreatRefreshTokenInterface } from '../interfaces/creatable-refresh-toke
 
 export class CreateRefreshTokenDto implements CreatRefreshTokenInterface {
   @IsUUID()
-  user_id: string;
+  userId: string;
 
   @IsString()
-  token_hash: string;
+  tokenHash: string;
 }

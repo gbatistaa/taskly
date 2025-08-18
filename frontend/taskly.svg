@@ -1,0 +1,7 @@
+<svg width="180" height="50" viewBox="0 0 180 50" fill="none" xmlns="http://www.w3.org/2000/svg" >
+    <!-- Ícone checkbox -->
+    <rect x="5" y="10" width="30" height="30" rx="6" ry="6" fill="#001F3F"/>
+    <polyline points="12,27 18,33 30,18" fill="none" stroke="#00FF00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Texto Taskly -->
+    <text x="50" y="35" font-family="Poppins, sans-serif" font-weight="600" font-size="30" fill="#001F3F" letter-spacing="0.02em">Taskly</text>
+</svg>

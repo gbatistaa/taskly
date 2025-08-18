@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction } from 'express';
 import { UserService } from 'src/modules/user/user.service';
-import { treatKnownErrors } from '../../errors/treatErrorCustomized';
+import { treatKnownErrors } from '../../../common/errors/treatErrorCustomized';
 import { LoginRequestInterface } from '../../interfaces/login-request.interface';
 
 @Injectable()

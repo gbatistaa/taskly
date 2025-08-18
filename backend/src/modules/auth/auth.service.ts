@@ -1,11 +1,11 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { Response } from 'express';
+import { treatKnownErrors } from '../common/errors/treatErrorCustomized';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { UserDTO } from '../user/dto/user-dto';
 import { UserService } from '../user/user.service';
 import { LoginRequestBodyDTO } from './dto/login-reqbody-dto';
-import { treatKnownErrors } from './errors/treatErrorCustomized';
 
 @Injectable()
 export class AuthService {

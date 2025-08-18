@@ -6,6 +6,8 @@ import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { UserDTO } from '../user/dto/user-dto';
 import { UserService } from '../user/user.service';
 import { LoginRequestBodyDTO } from './dto/login-reqbody-dto';
+import { generateAccessToken } from './tokens/generate-access-code';
+import { generateRefreshToken } from './tokens/generate-refresh-token';
 
 @Injectable()
 export class AuthService {
@@ -23,41 +25,22 @@ export class AuthService {
       const { email } = loginDto;
       const user = await this.userService.findOneByEmail(email, true);
 
-      // Tokens generation business logic:
-      const accessTokenPayload: Partial<UserDTO> = {
-        username: user.username,
-        firstName: user.firstName,
-      };
-      const accessToken = await this.jwtService.signAsync(accessTokenPayload, {
-        expiresIn: '15m',
-      });
-
-      res.cookie('access_token', accessToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 1000 * 60 * 60 * 24,
-      });
-
-      // Generate the refresh token:
-      const refreshTokenPayload: Partial<UserDTO> = {
-        ...accessTokenPayload,
-        lastName: user.lastName,
-      };
-      const refreshToken = await this.jwtService.signAsync(
-        refreshTokenPayload,
-        { expiresIn: '7d' },
+      const [accessTokenPayload, accessToken] = await generateAccessToken(
+        user,
+        this.jwtService,
+        res,
       );
 
-      // Store the refresh token on the database:
-      await this.refreshTokenService.create({
-        userId: user.id,
-        tokenHash: refreshToken,
-      });
+      const refreshToken = await generateRefreshToken(
+        user,
+        this.jwtService,
+        accessTokenPayload as Partial<UserDTO>,
+        this.refreshTokenService,
+      );
 
       res.status(200).send({ accessToken, refreshToken });
 
-      return { accessToken, refreshToken };
+      return { accessToken: accessToken as string, refreshToken };
     } catch (error: unknown) {
       treatKnownErrors(error);
 

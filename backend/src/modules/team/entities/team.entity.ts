@@ -1,12 +1,15 @@
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
 import { User } from 'src/modules/user/entities/user.entity';
-import { Column, Entity, JoinTable, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { TeamInterface } from '../interfaces/team.interface';
 
 @Entity()
 export class Team extends CommonEntity implements TeamInterface {
-  @OneToOne(() => User, (owner) => owner.id)
-  @JoinTable()
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'ownerId' })
+  owner: User;
+
+  @Column({ type: 'citext', name: 'ownerId' })
   ownerId: string;
 
   @Column({ type: 'citext', nullable: false })

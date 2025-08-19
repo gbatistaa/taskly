@@ -44,7 +44,7 @@ export class AuthService {
     } catch (error: unknown) {
       treatKnownErrors(error);
 
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Unexpected error on user login');
     }
   }
 }

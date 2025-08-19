@@ -18,7 +18,7 @@ export class RefreshTokenController {
 
   @Get('find')
   findOne(@Body() user_id: string) {
-    return this.refreshTokenService.findOne(+user_id);
+    return this.refreshTokenService.findOne(user_id);
   }
 
   @Delete('delete')

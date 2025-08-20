@@ -6,6 +6,8 @@ import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { UserDTO } from '../user/dto/user-dto';
 import { UserService } from '../user/user.service';
 import { LoginRequestBodyDTO } from './dto/login-reqbody-dto';
+import { AccessTokenPayload } from './interfaces/access-token-payload.interface';
+import { LogoutRequest } from './interfaces/logout-request.interface';
 import { generateAccessToken } from './tokens/generate-access-code';
 import { generateRefreshToken } from './tokens/generate-refresh-token';
 
@@ -45,6 +47,36 @@ export class AuthService {
       treatKnownErrors(error);
 
       throw new InternalServerErrorException('Unexpected error on user login');
+    }
+  }
+
+  async logout(req: LogoutRequest, res: Response) {
+    const { accessToken } = req.cookies;
+    const payload: AccessTokenPayload = this.jwtService.decode(accessToken);
+
+    try {
+      const user: UserDTO = await this.userService.findOne(
+        'username',
+        payload.username,
+      );
+
+      // Removing the refresh token from the database:
+      await this.refreshTokenService.remove(user.id);
+
+      // Removing the access token from the cookies:
+      res.clearCookie('accessToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      });
+
+      return res.json({ message: 'Logout made successfully' });
+    } catch (error) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException(
+        'Unexpected error on the user logout',
+      );
     }
   }
 }

@@ -8,7 +8,8 @@ import { UserService } from '../user/user.service';
 import { LoginRequestBodyDTO } from './dto/login-reqbody-dto';
 import { AccessTokenPayload } from './interfaces/access-token-payload.interface';
 import { LogoutRequest } from './interfaces/logout-request.interface';
-import { generateAccessToken } from './tokens/generate-access-code';
+import { RefreshRequest } from './interfaces/refresh-request.interface';
+import { generateAccessToken } from './tokens/generate-access-token';
 import { generateRefreshToken } from './tokens/generate-refresh-token';
 
 @Injectable()
@@ -79,4 +80,6 @@ export class AuthService {
       );
     }
   }
+
+  async refresh(req: RefreshRequest, res: Response) {}
 }

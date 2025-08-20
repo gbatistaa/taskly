@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import { Repository } from 'typeorm';
+import { treatKnownErrors } from '../common/errors/treatErrorCustomized';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDTO } from './dto/user-dto';
@@ -44,13 +45,29 @@ export class UserService {
       return plainToInstance(UserDTO, foundUser, {
         groups: withCredentials ? ['withCredentials'] : [],
       });
-    } catch (error) {
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
       throw new InternalServerErrorException(error);
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne<K extends keyof UserDTO>(prop: K, value: UserDTO[K]) {
+    try {
+      const foundUser = await this.repo.findOne({
+        where: { [prop]: value },
+      });
+
+      if (!foundUser) {
+        throw new NotFoundException('User not fount');
+      }
+
+      return plainToInstance(UserDTO, foundUser);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException('Unexpected error on user search');
+    }
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

@@ -1,13 +1,29 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, UnauthorizedException } from '@nestjs/common';
+import {
+  JsonWebTokenError,
+  NotBeforeError,
+  TokenExpiredError,
+} from '@nestjs/jwt';
 import { postgresErrorMap } from 'src/modules/common/utils/postgres-error-map';
 
 export const treatKnownErrors = (error: unknown) => {
-  // Treat Http exception errors:
+  // 1. Httpexception already released elsewhere
   if (error instanceof HttpException) {
     throw error;
   }
 
-  // Treat database errors:
+  // 2. Jwt errors
+  if (error instanceof TokenExpiredError) {
+    throw new UnauthorizedException('Expired token');
+  }
+  if (error instanceof JsonWebTokenError) {
+    throw new UnauthorizedException('Invalid token');
+  }
+  if (error instanceof NotBeforeError) {
+    throw new UnauthorizedException('Token not yet valid');
+  }
+
+  // 3. Postgres errors
   if (
     typeof error === 'object' &&
     error !== null &&

@@ -10,6 +10,7 @@ import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PasswordValidationMiddleware } from './middlewares/password-validation/password-validation.middleware';
+import { TokenValidationMiddleware } from './middlewares/token-validation/token-validation.middleware';
 import { UserExistenceMiddleware } from './middlewares/user-existence/user-existence.middleware';
 
 @Module({
@@ -28,6 +29,9 @@ export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserExistenceMiddleware, PasswordValidationMiddleware)
-      .forRoutes({ path: 'auth/login', method: RequestMethod.POST });
+      .forRoutes({ path: 'auth/login', method: RequestMethod.POST })
+      .apply(TokenValidationMiddleware)
+      .exclude({ path: 'auth/(.*)', method: RequestMethod.POST })
+      .forRoutes('*');
   }
 }

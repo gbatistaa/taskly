@@ -15,7 +15,7 @@ export const generateAccessToken = async (
     expiresIn: '15m',
   });
 
-  res.cookie('access_token', accessToken, {
+  res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',

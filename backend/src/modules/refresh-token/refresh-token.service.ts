@@ -49,9 +49,17 @@ export class RefreshTokenService {
     }
   }
 
-  async findOne(userId: string): Promise<RefreshTokenDto> {
+  async findOne<K extends keyof RefreshTokenDto>(
+    prop: K,
+    value: RefreshTokenDto[K],
+  ): Promise<RefreshTokenDto> {
     try {
-      const token = await this.repo.findOne({ where: { userId: userId } });
+      const token = await this.repo.findOne({ where: { [prop]: value } });
+
+      if (!token) {
+        throw new NotFoundException('Refresh token not found');
+      }
+
       return plainToInstance(RefreshTokenDto, token);
     } catch (error) {
       treatKnownErrors(error);

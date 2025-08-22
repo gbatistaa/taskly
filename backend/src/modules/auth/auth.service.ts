@@ -29,7 +29,7 @@ export class AuthService {
       const user = await this.userService.findOneByEmail(email, true);
 
       const [accessTokenPayload, accessToken] = await generateAccessToken(
-        user,
+        user as AccessTokenPayload,
         this.jwtService,
         res,
       );
@@ -81,5 +81,18 @@ export class AuthService {
     }
   }
 
-  async refresh(req: RefreshRequest, res: Response) {}
+  async refresh(req: RefreshRequest, res: Response) {
+    const { payload } = req;
+
+    if (!payload) return;
+
+    // Verify if refresh token is on the database:
+
+    const refreshTokenFound = await this.refreshTokenService.findOne(
+      'userId',
+      payload.id,
+    );
+
+    console.log(refreshTokenFound);
+  }
 }

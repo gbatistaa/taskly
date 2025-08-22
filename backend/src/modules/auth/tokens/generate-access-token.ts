@@ -1,15 +1,17 @@
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { UserDTO } from 'src/modules/user/dto/user-dto';
+import { AccessTokenPayload } from '../interfaces/access-token-payload.interface';
 
 export const generateAccessToken = async (
-  user: UserDTO,
+  user: AccessTokenPayload,
   jwtService: JwtService,
   res: Response,
 ): Promise<(string | Partial<UserDTO>)[]> => {
   const accessTokenPayload: Partial<UserDTO> = {
     username: user.username,
     firstName: user.firstName,
+    id: user.id,
   };
   const accessToken = await jwtService.signAsync(accessTokenPayload, {
     expiresIn: '15m',

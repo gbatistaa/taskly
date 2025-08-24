@@ -27,8 +27,13 @@ export class UserService {
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+    const users = await this.repo.find();
+    const dbUsers = users.map((user) => {
+      return plainToInstance(UserDTO, user);
+    });
+
+    return dbUsers;
   }
 
   async findOneByEmail(
@@ -70,8 +75,24 @@ export class UserService {
     }
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      const userToUpdate = await this.repo.findOne({
+        where: { id },
+      });
+
+      if (!userToUpdate) {
+        throw new NotFoundException('User to update was not found');
+      }
+
+      userToUpdate.username = updateUserDto.username as string;
+      userToUpdate.firstName = updateUserDto.firstName as string;
+      userToUpdate.lastName = updateUserDto.lastName as string;
+
+      await this.repo.save(userToUpdate);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+    }
   }
 
   remove(id: string) {

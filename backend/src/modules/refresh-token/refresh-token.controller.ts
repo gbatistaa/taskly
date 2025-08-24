@@ -9,12 +9,14 @@ export class RefreshTokenController {
   constructor(private readonly refreshTokenService: RefreshTokenService) {}
 
   @Post('create')
-  create(@Body() createRefreshTokenDto: CreateRefreshTokenDto) {
+  create(
+    @Body() createRefreshTokenDto: CreateRefreshTokenDto,
+  ): Promise<CreateRefreshTokenDto> {
     return this.refreshTokenService.create(createRefreshTokenDto);
   }
 
   @Get('find-all')
-  findAll() {
+  findAll(): Promise<RefreshTokenDto[]> {
     return this.refreshTokenService.findAll();
   }
 
@@ -27,7 +29,7 @@ export class RefreshTokenController {
     );
   }
   @Delete('delete')
-  remove(@Body() user_id: string) {
+  remove(@Body() user_id: string): Promise<RefreshTokenDto> {
     return this.refreshTokenService.remove(user_id);
   }
 }

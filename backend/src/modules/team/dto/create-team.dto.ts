@@ -1,7 +1,13 @@
+import { IsString } from 'class-validator';
 import { CreateTeamInterface } from '../interfaces/creatable-team.interface';
 
 export class CreateTeamDto implements CreateTeamInterface {
+  @IsString()
   name: string;
-  company?: string | undefined;
+
+  @IsString()
+  company: string;
+
+  @IsString()
   description: string;
 }

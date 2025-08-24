@@ -1,5 +1,6 @@
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
-import { Column, Entity, Unique } from 'typeorm';
+import { Team } from 'src/modules/team/entities/team.entity';
+import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { UserInterface } from '../interfaces/user.interface';
 
 @Entity()
@@ -33,4 +34,7 @@ export class User extends CommonEntity implements UserInterface {
     default: () => 'CURRENT_TIMESTAMP',
   })
   birthDate: Date;
+
+  @OneToMany(() => Team, (team) => team.owner)
+  teams: Team[];
 }

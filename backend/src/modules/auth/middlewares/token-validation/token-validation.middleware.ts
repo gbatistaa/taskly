@@ -33,7 +33,7 @@ export class TokenValidationMiddleware implements NestMiddleware {
       // console.log(payload);
       req.payload = payload;
 
-      next();
+      return next();
     } catch (error: unknown) {
       // In case of token expired:
       if (error instanceof TokenExpiredError) {
@@ -61,11 +61,12 @@ export class TokenValidationMiddleware implements NestMiddleware {
             res,
           );
 
-          return res.json({
+          console.log({
             message: 'The access token was refreshed',
             newAccessToken,
-            statusCode: 200,
           });
+
+          return next();
         } catch (error: unknown) {
           console.log(error);
         }

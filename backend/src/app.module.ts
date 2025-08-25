@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { RefreshTokenModule } from './modules/refresh-token/refresh-token.module';
+import { TeamMemberModule } from './modules/team-member/team-member.module';
 import { TeamModule } from './modules/team/team.module';
 import { UserModule } from './modules/user/user.module';
 
@@ -26,6 +27,7 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
     RefreshTokenModule,
     TeamModule,
+    TeamMemberModule,
   ],
   controllers: [AppController],
   providers: [AppService],

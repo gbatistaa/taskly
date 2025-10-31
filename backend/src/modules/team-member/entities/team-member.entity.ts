@@ -8,18 +8,21 @@ import { TeamMemberInterface } from '../interfaces/team-member.interface';
 @Entity()
 @Unique(['userId', 'teamId'])
 export class TeamMember extends CommonEntity implements TeamMemberInterface {
-  role: TeamRoles;
   @Column({ type: 'uuid', nullable: false })
   userId: string;
 
-  @ManyToOne(() => User, (user) => user.teams, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.teamMemberships, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'userId' })
   user: User;
 
   @Column({ type: 'uuid', nullable: false })
   teamId: string;
 
-  @ManyToOne(() => Team, (team) => team.teamMembers, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Team, (team) => team.teamMembers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'teamId' })
   team: Team;
 

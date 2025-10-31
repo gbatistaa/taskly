@@ -22,18 +22,24 @@ export class UserService {
       const dbUser = await this.repo.save(user);
 
       return plainToInstance(UserDTO, dbUser);
-    } catch (error) {
-      throw new InternalServerErrorException(error);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException(
+        'Unexpected error on user creation',
+      );
     }
   }
 
   async findAll() {
-    const users = await this.repo.find();
-    const dbUsers = users.map((user) => {
-      return plainToInstance(UserDTO, user);
-    });
-
-    return dbUsers;
+    try {
+      const users = await this.repo.find();
+      const dbUsers = users.map((user) => plainToInstance(UserDTO, user));
+      return dbUsers;
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+      throw new InternalServerErrorException('Erro ao buscar usuários');
+    }
   }
 
   async findOneByEmail(
@@ -64,7 +70,7 @@ export class UserService {
       });
 
       if (!foundUser) {
-        throw new NotFoundException('User not fount');
+        throw new NotFoundException('User not found');
       }
 
       return plainToInstance(UserDTO, foundUser);
@@ -72,6 +78,31 @@ export class UserService {
       treatKnownErrors(error);
 
       throw new InternalServerErrorException('Unexpected error on user search');
+    }
+  }
+
+  async findAllUserTeams(id: string) {
+    try {
+      const user = await this.repo.findOne({
+        where: { id },
+        relations: ['teamMemberships', 'teamMemberships.team'],
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found!');
+      }
+
+      const userTeams = user.teamMemberships.map(
+        (teamMembership) => teamMembership.team,
+      );
+
+      return userTeams;
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException(
+        "Unexpected error on find all user's teams",
+      );
     }
   }
 
@@ -95,7 +126,21 @@ export class UserService {
     }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    try {
+      const userToRemove = await this.repo.findOne({ where: { id } });
+
+      if (!userToRemove) {
+        throw new NotFoundException('User not found!');
+      }
+
+      await this.repo.remove(userToRemove);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException(
+        'Unexpected error on user removal',
+      );
+    }
   }
 }

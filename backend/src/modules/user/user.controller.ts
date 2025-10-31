@@ -30,6 +30,11 @@ export class UserController {
     return this.userService.findOne('id', id);
   }
 
+  @Get('find-user-teams/:id')
+  findUserTeams(@Param('id') id: string) {
+    return this.userService.findAllUserTeams(id);
+  }
+
   @Patch('update/:id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(id, updateUserDto);

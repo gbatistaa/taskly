@@ -55,9 +55,9 @@ export class TeamService {
     });
   }
 
-  async findOne<K extends keyof TeamDTO>(prop: K, value: TeamDTO[K]) {
+  async findTeams<K extends keyof Team>(prop: K, value: Team[K]) {
     try {
-      const teamFound = await this.repo.findOne({ where: { [prop]: value } });
+      const teamFound = await this.repo.find({ where: { [prop]: value } });
 
       if (!teamFound) {
         throw new NotFoundException('Team searched was not found');

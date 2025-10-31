@@ -7,6 +7,7 @@ import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { swagger } from './modules/common/docs/swagger';
+import { AppService } from './app.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +24,9 @@ async function bootstrap() {
 
   swagger(app, process.env.NODE_ENV || 'development');
   await app.listen(process.env.PORT || 3000);
+
+  const appService = app.get(AppService);
+  await appService.createUsersMock();
 }
 
 void bootstrap();

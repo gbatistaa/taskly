@@ -22,7 +22,7 @@ export class TeamController {
     return this.teamService.create(createTeamDto, req);
   }
 
-  @Get('find-all')
+  @Get('find')
   findAll() {
     return this.teamService.findAll();
   }
@@ -37,13 +37,13 @@ export class TeamController {
     return this.teamService.findTeams('id', name);
   }
 
-  @Patch('update/:name')
-  update(@Param('name') name: string, @Body() updateTeamDto: UpdateTeamDto) {
-    return this.teamService.update('name', name, updateTeamDto);
+  @Patch('update/:id')
+  update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
+    return this.teamService.update(id, updateTeamDto);
   }
 
-  @Delete('delete/:name')
-  remove(@Param('name') name: string) {
-    return this.teamService.remove('name', name);
+  @Delete('delete/:id')
+  remove(@Param('id') id: string) {
+    return this.teamService.remove(id);
   }
 }

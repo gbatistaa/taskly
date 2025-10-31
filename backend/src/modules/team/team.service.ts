@@ -73,14 +73,10 @@ export class TeamService {
     }
   }
 
-  async update<K extends keyof TeamDTO>(
-    prop: K,
-    value: TeamDTO[K],
-    updateTeamDto: UpdateTeamDto,
-  ): Promise<TeamDTO> {
+  async update(id: string, updateTeamDto: UpdateTeamDto): Promise<TeamDTO> {
     try {
       const teamToUpdate = await this.repo.findOne({
-        where: { [prop]: `$${value}$` },
+        where: { id },
       });
 
       if (!teamToUpdate) {
@@ -102,12 +98,9 @@ export class TeamService {
     }
   }
 
-  async remove<K extends keyof TeamDTO>(
-    prop: K,
-    value: TeamDTO[K],
-  ): Promise<void> {
+  async remove(id: string): Promise<void> {
     try {
-      const teamFound = await this.repo.findOne({ where: { [prop]: value } });
+      const teamFound = await this.repo.findOne({ where: { id } });
 
       if (!teamFound) {
         throw new NotFoundException('Team to remove was not found');

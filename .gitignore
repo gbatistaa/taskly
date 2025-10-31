@@ -3,3 +3,4 @@ backend/dist
 backend/ormlogs.log
 backend/.env
 backend/src/modules/test
+prompt-v0.md

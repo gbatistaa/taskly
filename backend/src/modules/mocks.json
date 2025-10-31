@@ -1,0 +1,206 @@
+[
+  [
+    {
+      "name": "Alpha Team",
+      "company": "TechCorp",
+      "description": "Responsible for core infrastructure"
+    },
+    {
+      "name": "Beta Team",
+      "company": "HealthInc",
+      "description": "Working on healthcare solutions"
+    },
+    {
+      "name": "Gamma Team",
+      "company": "EduSoft",
+      "description": "Building education platforms"
+    },
+    {
+      "name": "Delta Team",
+      "company": "FinBank",
+      "description": "Focused on fintech products"
+    }
+  ],
+  [
+    {
+      "cpf": "11111111111",
+      "email": "alice@example.com",
+      "password": "password1",
+      "firstName": "Alice",
+      "lastName": "Johnson",
+      "username": "alicej",
+      "birthDate": "1990-01-15"
+    },
+    {
+      "cpf": "22222222222",
+      "email": "bob@example.com",
+      "password": "password2",
+      "firstName": "Bob",
+      "lastName": "Smith",
+      "username": "bobsmith",
+      "birthDate": "1988-03-10"
+    },
+    {
+      "cpf": "33333333333",
+      "email": "carol@example.com",
+      "password": "password3",
+      "firstName": "Carol",
+      "lastName": "Davis",
+      "username": "carold",
+      "birthDate": "1992-07-21"
+    },
+    {
+      "cpf": "44444444444",
+      "email": "david@example.com",
+      "password": "password4",
+      "firstName": "David",
+      "lastName": "Miller",
+      "username": "davidm",
+      "birthDate": "1991-05-12"
+    },
+    {
+      "cpf": "55555555555",
+      "email": "eva@example.com",
+      "password": "password5",
+      "firstName": "Eva",
+      "lastName": "Taylor",
+      "username": "evat",
+      "birthDate": "1993-08-08"
+    },
+    {
+      "cpf": "66666666666",
+      "email": "frank@example.com",
+      "password": "password6",
+      "firstName": "Frank",
+      "lastName": "Anderson",
+      "username": "franka",
+      "birthDate": "1995-12-30"
+    },
+    {
+      "cpf": "77777777777",
+      "email": "grace@example.com",
+      "password": "password7",
+      "firstName": "Grace",
+      "lastName": "Wilson",
+      "username": "gracew",
+      "birthDate": "1989-04-18"
+    },
+    {
+      "cpf": "88888888888",
+      "email": "henry@example.com",
+      "password": "password8",
+      "firstName": "Henry",
+      "lastName": "Moore",
+      "username": "henrym",
+      "birthDate": "1996-09-14"
+    },
+    {
+      "cpf": "99999999999",
+      "email": "irene@example.com",
+      "password": "password9",
+      "firstName": "Irene",
+      "lastName": "Thomas",
+      "username": "irenet",
+      "birthDate": "1997-11-01"
+    },
+    {
+      "cpf": "10101010101",
+      "email": "jack@example.com",
+      "password": "password10",
+      "firstName": "Jack",
+      "lastName": "White",
+      "username": "jackw",
+      "birthDate": "1990-02-22"
+    },
+    {
+      "cpf": "11111111112",
+      "email": "kate@example.com",
+      "password": "password11",
+      "firstName": "Kate",
+      "lastName": "Hall",
+      "username": "kateh",
+      "birthDate": "1994-06-06"
+    },
+    {
+      "cpf": "12121212121",
+      "email": "leo@example.com",
+      "password": "password12",
+      "firstName": "Leo",
+      "lastName": "Allen",
+      "username": "leoa",
+      "birthDate": "1998-01-09"
+    },
+    {
+      "cpf": "13131313131",
+      "email": "mia@example.com",
+      "password": "password13",
+      "firstName": "Mia",
+      "lastName": "Young",
+      "username": "miay",
+      "birthDate": "1999-03-17"
+    },
+    {
+      "cpf": "14141414141",
+      "email": "nathan@example.com",
+      "password": "password14",
+      "firstName": "Nathan",
+      "lastName": "King",
+      "username": "nathank",
+      "birthDate": "1991-10-27"
+    },
+    {
+      "cpf": "15151515151",
+      "email": "olivia@example.com",
+      "password": "password15",
+      "firstName": "Olivia",
+      "lastName": "Scott",
+      "username": "olivias",
+      "birthDate": "1992-12-05"
+    },
+    {
+      "cpf": "16161616161",
+      "email": "paul@example.com",
+      "password": "password16",
+      "firstName": "Paul",
+      "lastName": "Adams",
+      "username": "paula",
+      "birthDate": "1987-07-07"
+    },
+    {
+      "cpf": "17171717171",
+      "email": "quinn@example.com",
+      "password": "password17",
+      "firstName": "Quinn",
+      "lastName": "Baker",
+      "username": "quinnb",
+      "birthDate": "1993-09-25"
+    },
+    {
+      "cpf": "18181818181",
+      "email": "ryan@example.com",
+      "password": "password18",
+      "firstName": "Ryan",
+      "lastName": "Green",
+      "username": "ryang",
+      "birthDate": "1995-04-04"
+    },
+    {
+      "cpf": "19191919191",
+      "email": "sophia@example.com",
+      "password": "password19",
+      "firstName": "Sophia",
+      "lastName": "Harris",
+      "username": "sophiah",
+      "birthDate": "1990-08-19"
+    },
+    {
+      "cpf": "20202020202",
+      "email": "tom@example.com",
+      "password": "password20",
+      "firstName": "Tom",
+      "lastName": "Clark",
+      "username": "tomc",
+      "birthDate": "1986-11-11"
+    }
+  ]
+]

@@ -1,4 +1,5 @@
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
+import { TeamMember } from 'src/modules/team-member/entities/team-member.entity';
 import { Team } from 'src/modules/team/entities/team.entity';
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { UserInterface } from '../interfaces/user.interface';
@@ -35,6 +36,11 @@ export class User extends CommonEntity implements UserInterface {
   })
   birthDate: Date;
 
+  // Times que ele possui (owner)
   @OneToMany(() => Team, (team) => team.owner)
   teams: Team[];
+
+  // Times que ele participa (TeamMember)
+  @OneToMany(() => TeamMember, (teamMember) => teamMember.user)
+  teamMemberships: TeamMember[];
 }

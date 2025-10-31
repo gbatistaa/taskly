@@ -23,7 +23,7 @@ import { UserExistenceMiddleware } from './middlewares/user-existence/user-exist
   ],
   controllers: [AuthController],
   providers: [AuthService],
-  exports: [AuthService],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

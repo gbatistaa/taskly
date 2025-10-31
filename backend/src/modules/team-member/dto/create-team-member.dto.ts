@@ -5,9 +5,6 @@ import { CreateTeamMemberInterface } from '../interfaces/createble-team-member.i
 
 export class CreateTeamMemberDto implements CreateTeamMemberInterface {
   @IsUUID()
-  userId: string;
-
-  @IsUUID()
   teamId: string;
 
   @IsEnumValue(TeamRoles)

@@ -1,3 +1,4 @@
+import { DB_TYPES } from 'src/db/db.types';
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
 import { TeamRoles } from 'src/modules/common/enums/Roles';
 import { Team } from 'src/modules/team/entities/team.entity';
@@ -27,7 +28,7 @@ export class TeamMember extends CommonEntity implements TeamMemberInterface {
   team: Team;
 
   @Column({
-    type: 'enum',
+    type: DB_TYPES.enum(TeamRoles),
     enum: TeamRoles,
     default: TeamRoles.MEMBER,
     nullable: false,

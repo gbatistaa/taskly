@@ -1,3 +1,4 @@
+import { isSQLite } from 'src/db/database.config';
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
 import { User } from 'src/modules/user/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
@@ -8,7 +9,7 @@ export class RefreshToken
   extends CommonEntity
   implements RefreshTokenInterface
 {
-  @Column({ type: 'citext', nullable: false })
+  @Column({ type: isSQLite ? 'text' : 'citext', nullable: false })
   userId: string;
 
   @ManyToOne(() => User, (user) => user.id, {
@@ -19,6 +20,6 @@ export class RefreshToken
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column({ type: 'citext', nullable: false })
+  @Column({ type: isSQLite ? 'text' : 'citext', nullable: false })
   tokenHash: string;
 }

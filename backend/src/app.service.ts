@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UserDTO } from './modules/user/dto/user-dto';
-import { UserService } from './modules/user/user.service';
-import { UserInterface } from './modules/user/interfaces/user.interface';
-import { createUsersMock } from './modules/common/utils/createUsersMock';
 import { plainToInstance } from 'class-transformer';
+import path from 'path';
+import { createUsersMock } from './modules/common/utils/createUsersMock';
 import { CreateUserDto } from './modules/user/dto/create-user.dto';
+import { UserDTO } from './modules/user/dto/user-dto';
+import { UserInterface } from './modules/user/interfaces/user.interface';
+import { UserService } from './modules/user/user.service';
 
 @Injectable()
 export class AppService {
@@ -15,7 +16,7 @@ export class AppService {
 
   async createUsersMock(): Promise<UserDTO[]> {
     const mocks: UserInterface[] = createUsersMock(
-      '/home/gbatistadev/Documents/Coding/personal-projects/taskly/backend/src/modules/mocks.json',
+      path.join(process.cwd(), 'src', 'modules', 'mocks.json'),
     );
     const createdUsers: UserDTO[] = [];
 

@@ -1,3 +1,4 @@
+import { isSQLite } from 'src/db/database.config';
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
 import { TeamMember } from 'src/modules/team-member/entities/team-member.entity';
 import { User } from 'src/modules/user/entities/user.entity';
@@ -21,13 +22,13 @@ export class Team extends CommonEntity implements TeamInterface {
   @Column({ type: 'uuid', name: 'ownerId' })
   ownerId: string;
 
-  @Column({ type: 'citext', nullable: false })
+  @Column({ type: isSQLite ? 'text' : 'citext', nullable: false })
   name: string;
 
-  @Column({ type: 'citext', nullable: true })
+  @Column({ type: isSQLite ? 'text' : 'citext', nullable: true })
   company: string;
 
-  @Column({ type: 'citext', nullable: false })
+  @Column({ type: isSQLite ? 'text' : 'citext', nullable: false })
   description: string;
 
   @OneToMany(() => TeamMember, (teamMember) => teamMember.team)

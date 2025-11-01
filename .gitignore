@@ -4,3 +4,4 @@ backend/ormlogs.log
 backend/.env
 backend/src/modules/test
 prompt-v0.md
+backend/src/db/taskly.db

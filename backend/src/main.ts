@@ -6,7 +6,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
-import { AppService } from './app.service';
 import { swagger } from './modules/common/docs/swagger';
 
 async function bootstrap() {
@@ -22,11 +21,13 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
+
   swagger(app, process.env.NODE_ENV || 'development');
   await app.listen(process.env.PORT || 3004);
-
-  const appService = app.get(AppService);
-  await appService.createUsersMock();
 }
 
 void bootstrap();

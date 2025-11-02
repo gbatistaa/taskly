@@ -44,6 +44,7 @@ console.log(isSQLite);
           migrations: [__dirname + '/../migrations/*.{js,ts}'],
           autoLoadEntities: true,
           synchronize: true,
+          dropSchema: true,
           logging: true,
           logger: 'file',
         };

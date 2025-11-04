@@ -33,6 +33,7 @@ export class AuthModule implements NestModule {
       .apply(TokenValidationMiddleware)
       .exclude({ path: 'auth/*path', method: RequestMethod.POST })
       .exclude({ path: 'user/*path', method: RequestMethod.POST })
+      .exclude({ path: '/', method: RequestMethod.GET })
       .forRoutes('*');
   }
 }

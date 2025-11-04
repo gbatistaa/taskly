@@ -11,6 +11,7 @@ import { LogoutRequest } from './interfaces/logout-request.interface';
 import { RefreshRequest } from './interfaces/refresh-request.interface';
 import { generateAccessToken } from './tokens/generate-access-token';
 import { generateRefreshToken } from './tokens/generate-refresh-token';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AuthService {
@@ -23,8 +24,13 @@ export class AuthService {
   async login(
     loginDto: LoginRequestBodyDTO,
     res: Response,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    user: UserDTO;
+  }> {
     try {
+      console.log('login');
       const { email } = loginDto;
       const user = await this.userService.findOneByEmail(email, true);
 
@@ -41,9 +47,17 @@ export class AuthService {
         this.refreshTokenService,
       );
 
-      res.status(200).send({ accessToken, refreshToken });
+      res.status(200).send({
+        accessToken,
+        refreshToken,
+        user: plainToInstance(UserDTO, user),
+      });
 
-      return { accessToken: accessToken as string, refreshToken };
+      return {
+        accessToken: accessToken as string,
+        refreshToken,
+        user: plainToInstance(UserDTO, user),
+      };
     } catch (error: unknown) {
       treatKnownErrors(error);
 
@@ -81,7 +95,7 @@ export class AuthService {
     }
   }
 
-  async refresh(req: RefreshRequest, res: Response) {
+  async refresh(req: RefreshRequest) {
     const { payload } = req;
 
     if (!payload) return;

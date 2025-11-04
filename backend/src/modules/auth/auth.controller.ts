@@ -31,7 +31,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
-  refresh(@Req() req: RefreshRequest, @Res() res: Response) {
-    return this.authService.refresh(req, res);
+  refresh(@Req() req: RefreshRequest) {
+    return this.authService.refresh(req);
   }
 }

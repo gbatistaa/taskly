@@ -3,7 +3,7 @@ import { UserInterface } from '../interfaces/user.interface';
 
 @Exclude()
 export class UserDTO implements UserInterface {
-  @Expose({ groups: ['withCredentials'] })
+  @Expose()
   id: string;
 
   cpf: string;
@@ -26,7 +26,9 @@ export class UserDTO implements UserInterface {
   @Expose({ groups: ['withCredentials'] })
   salt: string;
 
+  @Expose()
   birthDate: Date;
+
   createdAt: Date;
   updatedAt: Date;
 }

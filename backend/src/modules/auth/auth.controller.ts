@@ -1,13 +1,14 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
   Req,
   Res,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginRequestBodyDTO } from './dto/login-reqbody-dto';
 import { type LogoutRequest } from './interfaces/logout-request.interface';
@@ -33,5 +34,11 @@ export class AuthController {
   @Post('refresh-token')
   refresh(@Req() req: RefreshRequest) {
     return this.authService.refresh(req);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('me')
+  me(@Req() req: Request) {
+    return this.authService.me(req);
   }
 }

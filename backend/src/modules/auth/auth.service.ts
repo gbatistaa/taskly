@@ -1,6 +1,10 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { treatKnownErrors } from '../common/errors/treatErrorCustomized';
 import { RefreshTokenService } from '../refresh-token/refresh-token.service';
 import { UserDTO } from '../user/dto/user-dto';
@@ -26,7 +30,6 @@ export class AuthService {
     res: Response,
   ): Promise<{
     accessToken: string;
-    refreshToken: string;
     user: UserDTO;
   }> {
     try {
@@ -40,7 +43,7 @@ export class AuthService {
         res,
       );
 
-      const refreshToken = await generateRefreshToken(
+      await generateRefreshToken(
         user,
         this.jwtService,
         accessTokenPayload as Partial<UserDTO>,
@@ -49,13 +52,11 @@ export class AuthService {
 
       res.status(200).send({
         accessToken,
-        refreshToken,
         user: plainToInstance(UserDTO, user),
       });
 
       return {
         accessToken: accessToken as string,
-        refreshToken,
         user: plainToInstance(UserDTO, user),
       };
     } catch (error: unknown) {
@@ -108,5 +109,25 @@ export class AuthService {
     );
 
     console.log(refreshTokenFound);
+  }
+
+  async me(req: Request) {
+    const { accessToken } = req.cookies;
+    console.log(accessToken);
+
+    if (!accessToken || typeof accessToken !== 'string') {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    const payload =
+      await this.jwtService.verifyAsync<AccessTokenPayload>(accessToken);
+
+    if (!payload || !payload.id) {
+      throw new UnauthorizedException('Invalid access token');
+    }
+
+    const user: UserDTO = await this.userService.findOne('id', payload.id);
+
+    return plainToInstance(UserDTO, user);
   }
 }

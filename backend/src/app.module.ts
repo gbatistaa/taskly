@@ -28,7 +28,7 @@ console.log(isSQLite);
               process.env.DATABASE || 'taskly.db',
             ),
             autoLoadEntities: true,
-            synchronize: true,
+            // synchronize: true,
             logging: false,
           };
         }
@@ -43,8 +43,8 @@ console.log(isSQLite);
           database: process.env.DATABASE ?? 'taskly',
           migrations: [__dirname + '/../migrations/*.{js,ts}'],
           autoLoadEntities: true,
-          synchronize: true,
-          dropSchema: true,
+          // synchronize: true,
+          // dropSchema: true,
           logging: true,
           logger: 'file',
         };

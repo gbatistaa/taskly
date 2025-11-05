@@ -1,45 +1,55 @@
 "use client"
 
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import api from "./api/api";
 import { useRouter } from "next/navigation";
 import { Vortex } from "react-loader-spinner";
+import Error from "next/error";
+import { AxiosError } from "axios";
+import { useAtom } from "jotai";
+import { userDataAtom } from "./atoms/auth";
 
 
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
-
-
+  const [userData, setUserData] = useAtom(userDataAtom);
   const router = useRouter();
 
-  const handleDatabaseButtonClick = async (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    try {
-      setLoading(true);
-      await api.get("/");
-      setLoading(false);
-      router.push("/login");
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    setLoading(true);
+    const handleSiteAccess = async () => {
+      try {
+        const { data } = await api.get("/auth/me");
+        router.push("/dashboard");
+      } catch (error: unknown) {
+        if ((error as AxiosError).status === 401) {
+          router.push("/login");
+        }
+      }
+      finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 5000);
+      }
     }
-  }
+
+    handleSiteAccess();
+    return () => { };
+  }, []);
 
   return (
-    <button
-      type="button"
-      className="flex justify-center items-center h-12 bg-blue-500 rounded-lg w-80 px-3 py-2 hover:bg-blue-500/60 cursor-pointer"
-      onClick={(e) => handleDatabaseButtonClick(e)}
-    >
-      {loading ?
+    <div>
+      {loading ? (
         <Vortex
           visible={true}
           ariaLabel="vortex-loading"
           wrapperStyle={{}}
-          wrapperClass="h-5/6"
-          colors={['#000000']}
-        /> : "Gerar Banco de Dados"}
-    </button>
+          wrapperClass="h-40"
+          colors={['#ffffff']}
+        />
+      ) : <span></span>}
+    </div>
 
   );
 }

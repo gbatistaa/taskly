@@ -1,13 +1,12 @@
 "use client"
 
-import { MouseEvent, useEffect, useState } from "react";
-import api from "./api/api";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Vortex } from "react-loader-spinner";
-import Error from "next/error";
 import { AxiosError } from "axios";
 import { useAtom } from "jotai";
-import { userDataAtom } from "./atoms/auth";
+import { userDataAtom } from "./_extra/atoms/auth";
+import api from "./_extra/api/api";
 
 
 
@@ -21,6 +20,7 @@ export default function Home() {
     const handleSiteAccess = async () => {
       try {
         const { data } = await api.get("/auth/me");
+        setUserData(data);
         router.push("/dashboard");
       } catch (error: unknown) {
         if ((error as AxiosError).status === 401) {
@@ -28,9 +28,7 @@ export default function Home() {
         }
       }
       finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 5000);
+        setLoading(false);
       }
     }
 

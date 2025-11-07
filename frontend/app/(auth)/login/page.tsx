@@ -2,11 +2,11 @@
 
 import { atom, useAtom } from "jotai";
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import api from "../api/api";
 import { Vortex } from "react-loader-spinner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { userDataAtom } from "../atoms/auth";
+import api from "../../_extra/api/api";
+import { userDataAtom } from "../../_extra/atoms/auth";
 
 const loginDataAtom = atom({ email: "", password: "" });
 

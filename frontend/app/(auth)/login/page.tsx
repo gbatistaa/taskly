@@ -6,9 +6,9 @@ import { Vortex } from "react-loader-spinner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import api from "../../_extra/api/api";
-import { userDataAtom } from "../../_extra/atoms/auth";
+import { loginDataAtom, userDataAtom } from "../../_extra/atoms/auth";
+import { UserData } from "@/app/_extra/interfaces/user-data.interface";
 
-const loginDataAtom = atom({ email: "", password: "" });
 
 function login(): React.JSX.Element {
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,8 @@ function login(): React.JSX.Element {
     event.preventDefault();
     try {
       setLoading(true);
-      await api.post("/auth/login", loginData);
+      const { data }: { data: { accessToken: string, user: UserData } } = await api.post("/auth/login", loginData);
+      setUserData(data.user);
       router.push("/dashboard");
     } catch (error) {
       console.error(error);

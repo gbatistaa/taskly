@@ -11,6 +11,7 @@ export const generateAccessToken = async (
   const accessTokenPayload: Partial<UserDTO> = {
     username: user.username,
     firstName: user.firstName,
+    lastName: user.lastName,
     id: user.id,
   };
   const accessToken = await jwtService.signAsync(accessTokenPayload, {

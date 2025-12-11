@@ -1,4 +1,4 @@
-import { DB_TYPES } from 'src/db/db.types';
+import { DB_TYPES } from 'src/data/db.types';
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
 import { TeamRoles } from 'src/modules/common/enums/Roles';
 import { Team } from 'src/modules/team/entities/team.entity';

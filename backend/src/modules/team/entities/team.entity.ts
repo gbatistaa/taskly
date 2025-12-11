@@ -1,4 +1,4 @@
-import { isSQLite } from 'src/db/database.config';
+import { isSQLite } from 'src/data/database.config';
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
 import { TeamMember } from 'src/modules/team-member/entities/team-member.entity';
 import { User } from 'src/modules/user/entities/user.entity';

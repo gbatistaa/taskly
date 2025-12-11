@@ -1,4 +1,4 @@
-import { isSQLite } from 'src/db/database.config';
+import { isSQLite } from 'src/data/database.config';
 import { CommonEntity } from 'src/modules/common/entities/common-entity';
 import { User } from 'src/modules/user/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';

@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { isSQLite } from './db/database.config';
+import { isSQLite } from './data/database.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { RefreshTokenModule } from './modules/refresh-token/refresh-token.module';
 import { TeamMemberModule } from './modules/team-member/team-member.module';
@@ -20,15 +20,9 @@ console.log(isSQLite);
           console.log('🏠 Usando SQLite (modo tablet)');
           return {
             type: 'sqlite',
-            database: path.join(
-              __dirname,
-              '..',
-              'src',
-              'db',
-              process.env.DATABASE || 'taskly.db',
-            ),
+            database: path.join('/data', process.env.DATABASE || 'taskly.db'),
             autoLoadEntities: true,
-            // synchronize: true,
+            synchronize: true,
             logging: false,
           };
         }

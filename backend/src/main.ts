@@ -27,7 +27,7 @@ async function bootstrap() {
   });
 
   swagger(app, process.env.NODE_ENV || 'development');
-  await app.listen(process.env.PORT ?? 3001, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 }
 
 void bootstrap();

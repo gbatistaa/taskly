@@ -76,7 +76,7 @@ function login(): React.JSX.Element {
               ariaLabel="vortex-loading"
               wrapperStyle={{}}
               wrapperClass="h-5/6"
-              colors={['#000000']}
+              colors={["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff", "#ffffff"]}
             />
           ) : <span>Sign in</span>}
         </button>

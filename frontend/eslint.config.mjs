@@ -27,13 +27,12 @@ const customReactConfig = [
       prettier: require("eslint-plugin-prettier"),
       import: require("eslint-plugin-import"),
       "react-hooks": require("eslint-plugin-react-hooks"),
+      tailwindcss: require("eslint-plugin-tailwindcss"),
     },
     languageOptions: {
       parser: require("@typescript-eslint/parser"),
       parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
+        ecmaFeatures: { jsx: true },
         ecmaVersion: "latest",
         sourceType: "module",
       },
@@ -45,12 +44,7 @@ const customReactConfig = [
       "import/extensions": "off",
       "no-shadow": "off",
       "@typescript-eslint/no-shadow": ["error"],
-      "@typescript-eslint/explicit-function-return-type": [
-        "error",
-        {
-          allowExpressions: true,
-        },
-      ],
+      "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
       "max-len": [
         "warn",
         {
@@ -65,21 +59,23 @@ const customReactConfig = [
       "react/prop-types": "off",
       "prettier/prettier": ["error", { endOfLine: "auto", singleQuote: false }],
       quotes: ["error", "double"],
+
+      // TailwindCSS Sorting
+      "tailwindcss/classnames-order": "warn",
+      "tailwindcss/no-custom-classname": "off",
     },
     settings: {
-      react: {
-        version: "detect",
-      },
+      react: { version: "detect" },
       "import/resolver": {
         typescript: {},
+      },
+      tailwindcss: {
+        callees: ["classnames", "clsx", "ctl"],
       },
     },
   },
 ];
 
-const eslintConfig = [
-  ...nextConfig,
-  ...customReactConfig,
-];
+const eslintConfig = [...nextConfig, ...customReactConfig];
 
 export default eslintConfig;

@@ -5,5 +5,5 @@ export interface SignupData {
   firstName: string;
   lastName: string;
   username: string;
-  birthDate: Date;
+  birthDate: Date | string;
 }

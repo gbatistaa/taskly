@@ -1,14 +1,14 @@
 "use client"
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Vortex } from "react-loader-spinner";
 import { AxiosError } from "axios";
 import { useAtom } from "jotai";
-import { userDataAtom } from "./_extra/atoms/auth";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Vortex } from "react-loader-spinner";
+import { toast } from "sonner";
 import api from "./_extra/api/api";
-
-
+import { userDataAtom } from "./_extra/atoms/auth";
+import { UserData } from "./_extra/interfaces/user-data.interface";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
@@ -19,11 +19,14 @@ export default function Home() {
     setLoading(true);
     const handleSiteAccess = async () => {
       try {
-        const { data } = await api.get("/auth/me");
+        const { data }: { data: UserData } = await api.get("/auth/me");
+        toast(data.id);
         setUserData(data);
         router.push("/dashboard");
       } catch (error: unknown) {
-        if ((error as AxiosError).status === 401) {
+        const e = error as AxiosError;
+        if (e.status === 401) {
+          toast.error(e.message);
           router.push("/login");
         }
       }
@@ -46,7 +49,7 @@ export default function Home() {
           wrapperClass="h-40"
           colors={['#ffffff']}
         />
-      ) : <span></span>}
+      ) : <span>Olá</span>}
     </div>
 
   );

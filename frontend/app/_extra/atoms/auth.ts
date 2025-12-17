@@ -1,8 +1,8 @@
 import { atom } from "jotai";
-import { UserData } from "../interfaces/user-data.interface";
+import { atomWithStorage } from "jotai/utils";
 import { LoginData } from "../interfaces/login-data.interface";
 import { SignupData } from "../interfaces/signup-data.interface";
-import { atomWithStorage } from "jotai/utils";
+import { UserData } from "../interfaces/user-data.interface";
 
 export const userDataAtom = atomWithStorage<UserData | null>("userData", null);
 export const loginDataAtom = atom<LoginData>({ email: "", password: "" });

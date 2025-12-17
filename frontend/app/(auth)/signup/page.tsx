@@ -1,19 +1,22 @@
 "use client"
 
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import { useAtom } from "jotai";
-import { signupDataAtom } from "@/app/_extra/atoms/auth";
-import { Vortex } from "react-loader-spinner";
-import Link from "next/link";
 import api from "@/app/_extra/api/api";
+import { signupDataAtom, userDataAtom } from "@/app/_extra/atoms/auth";
 import { SignupData } from "@/app/_extra/interfaces/signup-data.interface";
-import { Axios, AxiosError } from "axios";
-import { Erica_One } from "next/font/google";
+import { UserData } from "@/app/_extra/interfaces/user-data.interface";
+import { AxiosError } from "axios";
+import { useAtom } from "jotai";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { ChangeEvent, FormEvent, useState } from "react";
+import { Vortex } from "react-loader-spinner";
 import { toast } from "sonner";
 
 function Signup(): React.JSX.Element {
   const [loading, setLoading] = useState(false);
   const [signupData, setSignupData] = useAtom(signupDataAtom);
+  const [_, setUserData] = useAtom(userDataAtom);
+  const router = useRouter();
 
   const handleChangeInputValue = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -45,8 +48,13 @@ function Signup(): React.JSX.Element {
 
       await api.post("/user/create", signupData);
 
-      toast.success(`Welcome ${signupData.firstName} ${signupData.lastName}`);
+      const loginData = { email: signupData.email, password: signupData.password };
 
+      const { data }: { data: { accessToken: string, user: UserData } } = await api.post("/auth/login", loginData);
+      setUserData(data.user);
+      router.push("/dashboard");
+
+      toast.success(`Welcome ${signupData.firstName} ${signupData.lastName}`);
     } catch (e: unknown) {
       const error = e as AxiosError;
       toast.error((error.response?.data as { message?: string })?.message || "An error occurred");
@@ -155,7 +163,7 @@ function Signup(): React.JSX.Element {
         </div>
         <button
           type="submit"
-          className="flex box-border justify-center items-center h-12 bg-blue-500 rounded-lg hover:bg-blue-500/60 
+          className="flex box-border justify-center items-center h-12 bg-blue-500 rounded-lg hover:bg-blue-500/60
             font-medium cursor-pointer"
         >
           {loading ? (

@@ -1,5 +1,6 @@
 // Load env vars before anything else
 import * as dotenv from 'dotenv';
+import fs from 'fs';
 dotenv.config({ path: './.env' });
 
 import { ValidationPipe } from '@nestjs/common';
@@ -7,6 +8,12 @@ import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { swagger } from './modules/common/docs/swagger';
+
+// garante que /data exista no Fly
+const dataDir = '/data';
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,7 +29,7 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: /http:\/\/localhost:\d+/,
+    origin: [/http:\/\/localhost:\d+/],
     credentials: true,
   });
 

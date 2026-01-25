@@ -8,11 +8,15 @@ import { NestFactory } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { swagger } from './modules/common/docs/swagger';
+import path from 'path';
+import { isSQLite } from './data/database.config';
 
 // garante que /data exista no Fly
-const dataDir = '/data';
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+if (isSQLite) {
+  const dataDir = process.env.DATA_PATH || path.join(__dirname, '..', 'data');
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
+  }
 }
 
 async function bootstrap() {
@@ -34,7 +38,7 @@ async function bootstrap() {
   });
 
   swagger(app, process.env.NODE_ENV || 'development');
-  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 4000, '0.0.0.0');
 }
 
 void bootstrap();

@@ -30,7 +30,7 @@ export class AuthController {
     return this.authService.logout(req, res);
   }
 
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @Post('refresh-token')
   refresh(@Req() req: RefreshRequest) {
     return this.authService.refresh(req);

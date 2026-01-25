@@ -33,7 +33,7 @@ export class AuthService {
     user: UserDTO;
   }> {
     try {
-      console.log('login');
+      console.log(loginDto);
       const { email } = loginDto;
       const user = await this.userService.findOneByEmail(email, true);
 
@@ -60,6 +60,7 @@ export class AuthService {
         user: plainToInstance(UserDTO, user),
       };
     } catch (error: unknown) {
+      console.log(error);
       treatKnownErrors(error);
 
       throw new InternalServerErrorException('Unexpected error on user login');

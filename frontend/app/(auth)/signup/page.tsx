@@ -20,6 +20,7 @@ function Signup(): React.JSX.Element {
 
   const handleChangeInputValue = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    console.log(name, value);
     setSignupData((prev: SignupData) => ({ ...prev, [name]: value }));
   }
 
@@ -29,33 +30,34 @@ function Signup(): React.JSX.Element {
     return `${day}/${month}/${year}`;
   }
 
-  const resetSignupData = () => {
-    setSignupData({
-      cpf: "",
-      email: "",
-      password: "",
-      firstName: "",
-      lastName: "",
-      username: "",
-      birthDate: "",
-    });
-  }
-
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       setLoading(true);
+      console.log(signupData);
 
       await api.post("/user/create", signupData);
 
-      const loginData = { email: signupData.email, password: signupData.password };
-
-      const { data }: { data: { accessToken: string, user: UserData } } = await api.post("/auth/login", loginData);
+      const { data }: { data: { accessToken: string, user: UserData } } = await api.post("/auth/login", {
+        email: signupData.email,
+        password: signupData.password,
+      });
       setUserData(data.user);
       router.push("/dashboard");
 
       toast.success(`Welcome ${signupData.firstName} ${signupData.lastName}`);
+
+      setSignupData({
+        cpf: "",
+        email: "",
+        password: "",
+        firstName: "",
+        lastName: "",
+        username: "",
+        birthDate: "",
+      });
     } catch (e: unknown) {
+      console.log(e);
       const error = e as AxiosError;
       toast.error((error.response?.data as { message?: string })?.message || "An error occurred");
     } finally {

@@ -10,15 +10,19 @@ export class CreateUserDto implements CreatableUserInterface {
   email: string;
 
   @IsString()
+  @Length(8, 128)
   password: string;
 
   @IsString()
+  @Length(3, 32)
   firstName: string;
 
   @IsString()
+  @Length(3, 32)
   lastName: string;
 
   @IsString()
+  @Length(3, 32)
   username: string;
 
   @IsDateString()

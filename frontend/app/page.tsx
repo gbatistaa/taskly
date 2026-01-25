@@ -27,8 +27,8 @@ export default function Home() {
         const e = error as AxiosError;
         if (e.status === 401) {
           toast.error(e.message);
-          router.push("/login");
         }
+        router.push("/login");
       }
       finally {
         setLoading(false);
@@ -36,7 +36,6 @@ export default function Home() {
     }
 
     handleSiteAccess();
-    return () => { };
   }, []);
 
   return (

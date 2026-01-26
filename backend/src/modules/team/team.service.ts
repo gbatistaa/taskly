@@ -63,6 +63,24 @@ export class TeamService {
     }
   }
 
+  async findById(id: string): Promise<TeamDTO> {
+    try {
+      const teamFound = await this.repo.findOne({ where: { id } });
+
+      if (!teamFound) {
+        throw new NotFoundException('Team not found');
+      }
+
+      return plainToInstance(TeamDTO, teamFound);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException(
+        'Unexpected error on finding team by id',
+      );
+    }
+  }
+
   async findTeams<K extends keyof Team>(prop: K, value: Team[K]) {
     try {
       const teamFound = await this.repo.find({ where: { [prop]: value } });

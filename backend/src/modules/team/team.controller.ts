@@ -27,14 +27,14 @@ export class TeamController {
     return this.teamService.findAll();
   }
 
-  @Get(':name')
+  @Get('/find-with-name/:name')
   findTeamByName(@Param('name') name: string) {
     return this.teamService.findTeams('name', name);
   }
 
   @Get(':id')
-  findById(@Param('id') name: string) {
-    return this.teamService.findTeams('id', name);
+  findById(@Param('id') id: string) {
+    return this.teamService.findById(id);
   }
 
   @Patch(':id')

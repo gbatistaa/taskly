@@ -17,32 +17,32 @@ import { TeamService } from './team.service';
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
-  @Post('create')
+  @Post('')
   create(@Body() createTeamDto: CreateTeamDto, @Req() req: RefreshRequest) {
     return this.teamService.create(createTeamDto, req);
   }
 
-  @Get('find')
+  @Get('')
   findAll() {
     return this.teamService.findAll();
   }
 
-  @Get('find/:name')
+  @Get(':name')
   findTeamByName(@Param('name') name: string) {
     return this.teamService.findTeams('name', name);
   }
 
-  @Get('find/:id')
+  @Get(':id')
   findById(@Param('id') name: string) {
     return this.teamService.findTeams('id', name);
   }
 
-  @Patch('update/:id')
+  @Patch(':id')
   update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
     return this.teamService.update(id, updateTeamDto);
   }
 
-  @Delete('delete/:id')
+  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.teamService.remove(id);
   }

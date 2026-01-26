@@ -10,11 +10,17 @@ export const generateRefreshToken = async (
 ) => {
   const refreshTokenPayload: Partial<UserDTO> = {
     ...accessTokenPayload,
+    firstName: user.firstName,
     lastName: user.lastName,
   };
+
+  console.log(refreshTokenPayload);
+
   const refreshToken = await jwtService.signAsync(refreshTokenPayload, {
     expiresIn: '7d',
   });
+
+  console.log(refreshToken);
 
   await refreshTokenService.create({
     userId: user.id,

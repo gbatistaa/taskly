@@ -76,6 +76,8 @@ export class TeamMemberService {
       return teamMember;
     } catch (error: unknown) {
       treatKnownErrors(error);
+
+      throw new InternalServerErrorException('Failed to find team member');
     }
   }
 

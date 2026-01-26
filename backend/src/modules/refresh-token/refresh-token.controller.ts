@@ -16,12 +16,14 @@ export class RefreshTokenController {
   }
 
   @Get('find-all')
-  findAll(): Promise<RefreshTokenDto[]> {
+  findAll(): Promise<RefreshTokenDto[] | null> {
     return this.refreshTokenService.findAll();
   }
 
   @Post('find')
-  async findOne(@Body() body: FindRefreshTokenDto): Promise<RefreshTokenDto> {
+  async findOne(
+    @Body() body: FindRefreshTokenDto,
+  ): Promise<RefreshTokenDto | null> {
     const { prop, value } = body;
     return await this.refreshTokenService.findOne(
       prop as keyof RefreshTokenDto,

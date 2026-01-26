@@ -38,7 +38,7 @@ export class UserService {
       return dbUsers;
     } catch (error: unknown) {
       treatKnownErrors(error);
-      throw new InternalServerErrorException('Erro ao buscar usuários');
+      throw new InternalServerErrorException('Failed to retrieve users');
     }
   }
 
@@ -59,12 +59,13 @@ export class UserService {
     } catch (error: unknown) {
       treatKnownErrors(error);
 
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException('Failed to find user by email');
     }
   }
 
   async findOne<K extends keyof UserDTO>(prop: K, value: UserDTO[K]) {
     try {
+      console.log(prop, value);
       const foundUser = await this.repo.findOne({
         where: { [prop]: value },
       });
@@ -123,6 +124,8 @@ export class UserService {
       await this.repo.save(userToUpdate);
     } catch (error: unknown) {
       treatKnownErrors(error);
+
+      throw new InternalServerErrorException('Failed to update user');
     }
   }
 

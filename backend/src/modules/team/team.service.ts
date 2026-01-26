@@ -32,8 +32,10 @@ export class TeamService {
       const creatorUser: AccessTokenPayload =
         this.jwtService.decode(accessToken);
 
-      const team = this.repo.create(createTeamDto);
-      team.ownerId = creatorUser.id;
+      const team = this.repo.create({
+        ...createTeamDto,
+        ownerId: creatorUser.id,
+      });
 
       const dbTeam = await this.repo.save(team);
 
@@ -48,11 +50,17 @@ export class TeamService {
   }
 
   async findAll() {
-    const teams = await this.repo.find();
+    try {
+      const teams = await this.repo.find();
 
-    return teams.map((team) => {
-      return plainToInstance(TeamDTO, team);
-    });
+      return teams.map((team) => {
+        return plainToInstance(TeamDTO, team);
+      });
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException('Failed to retrieve teams');
+    }
   }
 
   async findTeams<K extends keyof Team>(prop: K, value: Team[K]) {
@@ -92,9 +100,7 @@ export class TeamService {
     } catch (error: unknown) {
       treatKnownErrors(error);
 
-      throw new InternalServerErrorException(
-        'Unexpected error on finding one team',
-      );
+      throw new InternalServerErrorException('Failed to update team');
     }
   }
 

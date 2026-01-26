@@ -28,15 +28,15 @@ export class RefreshTokenService {
     } catch (error) {
       treatKnownErrors(error);
 
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Failed to create refresh token');
     }
   }
 
-  async findAll(): Promise<RefreshTokenDto[]> {
+  async findAll(): Promise<RefreshTokenDto[] | null> {
     try {
       const tokens = await this.repo.find();
-      if (!tokens) {
-        throw new NotFoundException('The refresh tokens table is empty');
+      if (!tokens || tokens.length === 0) {
+        return null;
       }
       const tokensDtos = tokens.map((token) => {
         return plainToInstance(RefreshTokenDto, token);
@@ -45,25 +45,27 @@ export class RefreshTokenService {
       return tokensDtos;
     } catch (error: unknown) {
       treatKnownErrors(error);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(
+        'Failed to retrieve refresh tokens',
+      );
     }
   }
 
   async findOne<K extends keyof RefreshTokenDto>(
     prop: K,
     value: RefreshTokenDto[K],
-  ): Promise<RefreshTokenDto> {
+  ): Promise<RefreshTokenDto | null> {
     try {
       const token = await this.repo.findOne({ where: { [prop]: value } });
 
       if (!token) {
-        throw new NotFoundException('Refresh token not found');
+        return null;
       }
 
       return plainToInstance(RefreshTokenDto, token);
     } catch (error) {
       treatKnownErrors(error);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Failed to find refresh token');
     }
   }
 
@@ -82,7 +84,7 @@ export class RefreshTokenService {
     } catch (error) {
       treatKnownErrors(error);
 
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException('Failed to remove refresh token');
     }
   }
 }

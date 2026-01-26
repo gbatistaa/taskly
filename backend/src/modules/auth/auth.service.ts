@@ -33,7 +33,6 @@ export class AuthService {
     user: UserDTO;
   }> {
     try {
-      console.log(loginDto);
       const { email } = loginDto;
       const user = await this.userService.findOneByEmail(email, true);
 
@@ -43,12 +42,36 @@ export class AuthService {
         res,
       );
 
-      await generateRefreshToken(
-        user,
-        this.jwtService,
-        accessTokenPayload as Partial<UserDTO>,
-        this.refreshTokenService,
+      const refreshToken = await this.refreshTokenService.findOne(
+        'userId',
+        user.id,
       );
+
+      let shouldGenerateNewRefreshToken = !refreshToken;
+
+      if (refreshToken) {
+        const decodedToken: string | { [key: string]: any } | null =
+          this.jwtService.decode(refreshToken.tokenHash);
+
+        const isRefreshTokenExpired: boolean =
+          decodedToken && typeof decodedToken === 'object' && decodedToken.exp
+            ? Date.now() >= decodedToken.exp * 1000
+            : true;
+
+        if (isRefreshTokenExpired) {
+          await this.refreshTokenService.remove(refreshToken.userId);
+          shouldGenerateNewRefreshToken = true;
+        }
+      }
+
+      if (shouldGenerateNewRefreshToken) {
+        await generateRefreshToken(
+          user,
+          this.jwtService,
+          accessTokenPayload as Partial<UserDTO>,
+          this.refreshTokenService,
+        );
+      }
 
       res.status(200).send({
         accessToken,
@@ -60,9 +83,7 @@ export class AuthService {
         user: plainToInstance(UserDTO, user),
       };
     } catch (error: unknown) {
-      console.log(error);
       treatKnownErrors(error);
-
       throw new InternalServerErrorException('Unexpected error on user login');
     }
   }
@@ -98,37 +119,48 @@ export class AuthService {
   }
 
   async refresh(req: RefreshRequest) {
-    const { payload } = req;
+    try {
+      const { payload } = req;
 
-    if (!payload) return;
+      if (!payload) return;
 
-    // Verify if refresh token is on the database:
+      // Verify if refresh token is on the database:
 
-    const refreshTokenFound = await this.refreshTokenService.findOne(
-      'userId',
-      payload.id,
-    );
+      const refreshTokenFound = await this.refreshTokenService.findOne(
+        'userId',
+        payload.id,
+      );
 
-    console.log(refreshTokenFound);
+      console.log(refreshTokenFound);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException('Failed to refresh token');
+    }
   }
 
   async me(req: Request) {
-    const { accessToken } = req.cookies;
-    console.log(accessToken);
+    try {
+      const { accessToken } = req.cookies;
 
-    if (!accessToken || typeof accessToken !== 'string') {
-      throw new UnauthorizedException('User not authenticated');
+      if (!accessToken || typeof accessToken !== 'string') {
+        throw new UnauthorizedException('User not authenticated');
+      }
+
+      const payload =
+        await this.jwtService.verifyAsync<AccessTokenPayload>(accessToken);
+
+      if (!payload || !payload.id) {
+        throw new UnauthorizedException('Invalid access token');
+      }
+
+      const user: UserDTO = await this.userService.findOne('id', payload.id);
+
+      return plainToInstance(UserDTO, user);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException('Failed to retrieve user session');
     }
-
-    const payload =
-      await this.jwtService.verifyAsync<AccessTokenPayload>(accessToken);
-
-    if (!payload || !payload.id) {
-      throw new UnauthorizedException('Invalid access token');
-    }
-
-    const user: UserDTO = await this.userService.findOne('id', payload.id);
-
-    return plainToInstance(UserDTO, user);
   }
 }

@@ -1,43 +1,62 @@
-"use client"
+"use client";
 
 import { useAtom } from "jotai";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { userDataAtom } from "../../_extra/atoms/auth";
 import TeamCard from "./components/TeamCard";
 import { FaPlus } from "react-icons/fa";
 import { userTeamsAtom } from "@/app/_extra/atoms/teams";
 import CreateTeamModal from "./components/CreateTeamModal";
+import { UserData } from "@/app/_extra/interfaces/user-data.interface";
+import api from "@/app/_extra/api/api";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 
 function DashBoard(): React.JSX.Element {
   const [userData, setUserData] = useAtom(userDataAtom);
   const [userTeams, setUserTeams] = useAtom(userTeamsAtom);
   const [isCreateTeamModalOpen, setIsCreateTeamModalOpen] = useState(false);
+  const router = useRouter();
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     const { data }: { data: UserData } = await api.get("/auth/me");
-  //     console.log(data)
-  //     setUserData(data);
-  //   }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const { data }: { data: UserData } = await api.get("/auth/me");
+        setUserData(data);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if ([401, 403, 404].includes(error.response?.status as number)) {
+            router.push("/login");
+          }
+          toast.error(error.response?.data.message, { duration: 5000 });
+        }
+      }
+    };
 
-  //   const fetchUserTeams = async () => {
-  //     const { data } = await api.get(`user/find-user-teams/${userData?.id}`);
-  //     console.log(data);
-  //     setUserTeams(data);
-  //   }
+    const fetchUserTeams = async () => {
+      try {
+        const { data } = await api.get(`user/find-user-teams/${userData?.id}`);
+        setUserTeams(data);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          toast.error(error.response?.data.message, { duration: 5000 });
+        }
+      }
+    };
 
-  //   const fetchData = async () => {
-  //     await fetchUserData();
-  //     await fetchUserTeams();
-  //   }
+    const fetchData = async () => {
+      await fetchUserData();
+      await fetchUserTeams();
+    };
 
-  //   fetchData();
-  // }, []);
+    fetchData();
+  }, []);
 
   return (
     <>
-      <section className="border-2 solid border-blue-500 h-full w-full">
-        <div className="h-30 border px-20 flex justify-between items-center">
+      <section className="border-2 border-blue-500 w-full h-full solid">
+        <div className="flex justify-between items-center px-20 border h-30">
           <div className="flex flex-col gap-0">
             <h2 className="font-semibold text-3xl">Your teams</h2>
             <p className="text-gray-400">Manage your teams and colaborate with them</p>
@@ -45,21 +64,17 @@ function DashBoard(): React.JSX.Element {
           <button
             type="button"
             onClick={() => setIsCreateTeamModalOpen(true)}
-            className="items-center flex duration-300 rounded-xl hover:cursor-pointer hover:brightness-120 ease-out gap-2 px-4 bg-linear-to-r from-blue-400 to-blue-500 py-2"
+            className="flex items-center gap-2 bg-linear-to-r from-blue-400 to-blue-500 hover:brightness-120 px-4 py-2 rounded-xl duration-300 ease-out hover:cursor-pointer"
           >
             <FaPlus />
             Create team
           </button>
         </div>
-        <main className="grid grid-cols-3 gap-8 px-20 pt-10">
-          {userTeams.length > 0 ? (
-            userTeams.map((team, index) => (
-              <TeamCard key={index} team={team} />
-            ))
-          ) : "sem times"};
+        <main className="gap-8 grid grid-cols-3 px-20 pt-10">
+          {userTeams.length > 0 ? userTeams.map((team, index) => <TeamCard key={index} team={team} />) : "sem times"};
         </main>
       </section>
-      {isCreateTeamModalOpen && <CreateTeamModal />}
+      {isCreateTeamModalOpen && <CreateTeamModal onClose={() => setIsCreateTeamModalOpen(false)} />}
     </>
   );
 }

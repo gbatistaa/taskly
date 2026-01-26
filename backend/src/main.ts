@@ -1,7 +1,7 @@
 // Load env vars before anything else
 import * as dotenv from 'dotenv';
 import fs from 'fs';
-dotenv.config({ path: './.env' });
+dotenv.config({ path: './.env.production' });
 
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';

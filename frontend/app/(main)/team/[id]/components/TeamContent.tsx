@@ -36,7 +36,7 @@ export default function TeamContent({ team }: TeamContentProps): React.JSX.Eleme
         <div className="flex gap-2 bg-slate-800 p-2 rounded-xl w-fit">
           <label
             htmlFor="tasks"
-            className={`flex cursor-pointer items-center gap-1 px-2 py-1.5 rounded-xl duration-300 ease-out ${selectedTab === TeamTab.TASKS ? "bg-blue-500" : ""}`}
+            className={`flex cursor-pointer items-center gap-1 px-2 py-1.5 rounded-xl duration-200 ease-out ${selectedTab === TeamTab.TASKS ? "bg-blue-500" : "text-gray-400"}`}
           >
             <input
               type="radio"
@@ -52,7 +52,7 @@ export default function TeamContent({ team }: TeamContentProps): React.JSX.Eleme
           </label>
           <label
             htmlFor="members"
-            className={`flex cursor-pointer items-center gap-1 px-2 py-1.5 rounded-xl duration-300 ease-out ${selectedTab === TeamTab.MEMBERS ? "bg-blue-500" : ""}`}
+            className={`flex cursor-pointer items-center gap-1 px-2 py-1.5 rounded-xl duration-200 ease-out ${selectedTab === TeamTab.MEMBERS ? "bg-blue-500" : "text-gray-400"}`}
           >
             <input
               type="radio"
@@ -68,7 +68,7 @@ export default function TeamContent({ team }: TeamContentProps): React.JSX.Eleme
           </label>
           <label
             htmlFor="configuration"
-            className={`flex cursor-pointer items-center gap-1 px-2 py-1.5 rounded-xl duration-300 ease-out ${selectedTab === TeamTab.CONFIGURATION ? "bg-blue-500" : " text-gray-400"}`}
+            className={`flex cursor-pointer items-center gap-1 px-2 py-1.5 rounded-xl duration-200 ease-out ${selectedTab === TeamTab.CONFIGURATION ? "bg-blue-500" : " text-gray-400"}`}
           >
             <input
               type="radio"

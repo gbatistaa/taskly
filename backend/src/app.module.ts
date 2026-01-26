@@ -41,8 +41,6 @@ console.log(isSQLite);
           database: process.env.DATABASE ?? 'taskly',
           migrations: [__dirname + '/../migrations/*.{js,ts}'],
           autoLoadEntities: true,
-          synchronize: true,
-          dropSchema: true,
           logging: true,
           logger: 'file',
         };

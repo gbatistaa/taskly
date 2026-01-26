@@ -17,7 +17,7 @@ import { UpdateTeamMemberDto } from './dto/update-team-member.dto';
 export class TeamMemberController {
   constructor(private readonly teamMemberService: TeamMemberService) {}
 
-  @Post('create')
+  @Post('')
   create(
     @Body() createTeamMemberDto: CreateTeamMemberDto,
     @Req() req: RefreshRequest,
@@ -25,17 +25,17 @@ export class TeamMemberController {
     return this.teamMemberService.create(createTeamMemberDto, req);
   }
 
-  @Get('find/:teamId')
+  @Get(':teamId')
   findAllTeamMembers(@Param('teamId') teamId: string) {
     return this.teamMemberService.findAllTeamMembers(teamId);
   }
 
-  @Get('find/:id')
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.teamMemberService.findOne(id);
   }
 
-  @Patch('update/:id')
+  @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() updateTeamMemberDto: UpdateTeamMemberDto,
@@ -43,7 +43,7 @@ export class TeamMemberController {
     return this.teamMemberService.update(id, updateTeamMemberDto);
   }
 
-  @Delete('remove/:id')
+  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.teamMemberService.remove(id);
   }

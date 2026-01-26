@@ -4,6 +4,12 @@ import { TeamInterface } from '../interfaces/team.interface';
 @Exclude()
 export class TeamDTO implements Partial<TeamInterface> {
   @Expose()
+  id: string;
+
+  @Expose()
+  ownerId: string;
+
+  @Expose()
   name: string;
 
   @Expose()

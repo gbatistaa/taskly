@@ -131,7 +131,9 @@ export class AuthService {
         payload.id,
       );
 
-      console.log(refreshTokenFound);
+      if (!refreshTokenFound) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
     } catch (error: unknown) {
       treatKnownErrors(error);
 

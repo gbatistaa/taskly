@@ -89,8 +89,14 @@ export class UserService {
         relations: ['teamMemberships', 'teamMemberships.team'],
       });
 
+      console.log(user);
       if (!user) {
         throw new NotFoundException('User not found!');
+      }
+
+      if (user.teamMemberships.length === 0) {
+        console.log('User is not a member of any team!');
+        throw new NotFoundException('User is not a member of any team!');
       }
 
       const userTeams = user.teamMemberships.map(

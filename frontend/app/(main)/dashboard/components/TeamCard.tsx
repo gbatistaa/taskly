@@ -6,22 +6,22 @@ import { MdPeopleAlt } from "react-icons/md";
 
 function TeamCard({ team }: { team: Team }): React.JSX.Element {
   return (
-    <div className="flex cursor-pointer duration-300 ease-out text-gray-400 flex-col group hover:shadow-[0_0_50px_rgba(96,165,250,0.3)] gap-4 border solid border-slate-700 w-full rounded-xl p-6 bg-slate-900 col-span-1">
-      <div className="flex w-full items-center justify-between">
-        <div className="w-fit flex aspect-square p-2 rounded-xl bg-blue-500/30">
+    <div className="group flex flex-col gap-4 col-span-1 bg-slate-900 hover:shadow-[0_0_50px_rgba(96,165,250,0.3)] p-6 border border-slate-700 rounded-xl w-full text-gray-400 duration-300 ease-out cursor-pointer solid">
+      <div className="flex justify-between items-center w-full">
+        <div className="flex bg-blue-500/30 p-2 rounded-xl w-fit aspect-square">
           <MdPeopleAlt className="w-8 h-auto text-blue-500" />
         </div>
-        <BsArrowRight className="text-white h-auto w-5 opacity-0 group-hover:opacity-100 duration-300 ease-out" />
+        <BsArrowRight className="opacity-0 group-hover:opacity-100 w-5 h-auto text-white duration-300 ease-out" />
       </div>
-      <h3 className="font-semibold text-2xl text-white">Nome</h3>
-      <div className=" flex gap-2 items-center text-gray-400">
+      <h3 className="font-semibold text-white text-2xl">{team.name}</h3>
+      <div className="flex items-center gap-2 text-gray-400">
         <LuBuilding2 />
         <span>Empresa</span>
       </div>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque sequi distinctio delectus a accusamus voluptatum quibusdam, dolor, corporis dignissimos beatae quisquam pariatur qui eligendi? Obcaecati officia eaque alias eveniet quaerat!</p>
-      <div className="flex gap-2 items-center">
+      <p className="wrap-break-word">{team.description}</p>
+      <div className="flex items-center gap-2">
         <MdPeopleAlt />
-        <span>8 membros</span>
+        <span>8 members</span>
       </div>
     </div>
   );

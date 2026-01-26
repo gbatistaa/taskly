@@ -7,11 +7,13 @@ import TeamCard from "./components/TeamCard";
 import { FaPlus } from "react-icons/fa";
 import { userTeamsAtom } from "@/app/_extra/atoms/teams";
 import CreateTeamModal from "./components/CreateTeamModal";
+import EmptyTeamsState from "./components/EmptyTeamsState";
 import { UserData } from "@/app/_extra/interfaces/user-data.interface";
 import api from "@/app/_extra/api/api";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import { Team } from "@/app/_extra/interfaces/team.interface";
 
 function DashBoard(): React.JSX.Element {
   const [userData, setUserData] = useAtom(userDataAtom);
@@ -24,6 +26,7 @@ function DashBoard(): React.JSX.Element {
       try {
         const { data }: { data: UserData } = await api.get("/auth/me");
         setUserData(data);
+        return data;
       } catch (error) {
         if (error instanceof AxiosError) {
           if ([401, 403, 404].includes(error.response?.status as number)) {
@@ -34,9 +37,9 @@ function DashBoard(): React.JSX.Element {
       }
     };
 
-    const fetchUserTeams = async () => {
+    const fetchUserTeams = async (userId: string) => {
       try {
-        const { data } = await api.get(`user/find-user-teams/${userData?.id}`);
+        const { data }: { data: Team[] } = await api.get(`user/find-user-teams/${userId}`);
         setUserTeams(data);
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -46,17 +49,19 @@ function DashBoard(): React.JSX.Element {
     };
 
     const fetchData = async () => {
-      await fetchUserData();
-      await fetchUserTeams();
+      const userData = await fetchUserData();
+      if (userData?.id) {
+        await fetchUserTeams(userData.id);
+      }
     };
 
-    fetchData();
+    void fetchData();
   }, []);
 
   return (
     <>
-      <section className="border-2 border-blue-500 w-full h-full solid">
-        <div className="flex justify-between items-center px-20 border h-30">
+      <section className="w-full h-full">
+        <div className="flex justify-between items-center px-20 h-30">
           <div className="flex flex-col gap-0">
             <h2 className="font-semibold text-3xl">Your teams</h2>
             <p className="text-gray-400">Manage your teams and colaborate with them</p>
@@ -71,7 +76,11 @@ function DashBoard(): React.JSX.Element {
           </button>
         </div>
         <main className="gap-8 grid grid-cols-3 px-20 pt-10">
-          {userTeams.length > 0 ? userTeams.map((team, index) => <TeamCard key={index} team={team} />) : "sem times"};
+          {userTeams.length > 0 ? (
+            userTeams.map((team, index) => <TeamCard key={index} team={team} />)
+          ) : (
+            <EmptyTeamsState />
+          )}
         </main>
       </section>
       {isCreateTeamModalOpen && <CreateTeamModal onClose={() => setIsCreateTeamModalOpen(false)} />}

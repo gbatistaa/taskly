@@ -1,12 +1,19 @@
 import api from "@/app/_extra/api/api";
+import { TeamRoles } from "@/app/_extra/enums/TeamRoles.enum";
+import { Team } from "@/app/_extra/interfaces/team.interface";
 import { AxiosError } from "axios";
 import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { Vortex } from "react-loader-spinner";
 import { toast } from "sonner";
+import { useAtom } from "jotai";
+import { userTeamsAtom } from "@/app/_extra/atoms/teams";
+import { userDataAtom } from "@/app/_extra/atoms/auth";
 
 function CreateTeamModal({ onClose }: { onClose: () => void }): React.JSX.Element {
   const [loading, setLoading] = useState(false);
+  const [userTeams, setUserTeams] = useAtom(userTeamsAtom);
+  const [userData] = useAtom(userDataAtom);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     try {
@@ -24,11 +31,19 @@ function CreateTeamModal({ onClose }: { onClose: () => void }): React.JSX.Elemen
 
       setLoading(true);
 
-      await api.post("/team", {
+      const { data: createdTeam }: { data: Team } = await api.post("/team", {
         name,
         company,
         description,
       });
+
+      await api.post(`/team-member`, {
+        teamId: createdTeam.id,
+        teamRole: TeamRoles.OWNER,
+      });
+
+      const { data: teams }: { data: Team[] } = await api.get(`user/find-user-teams/${userData?.id}`);
+      setUserTeams(teams);
 
       toast.success("Team created successfully!", { duration: 5000 });
     } catch (error) {
@@ -36,10 +51,8 @@ function CreateTeamModal({ onClose }: { onClose: () => void }): React.JSX.Elemen
         toast.error(error.response?.data.message, { duration: 5000 });
       }
     } finally {
-      setTimeout(() => {
-        setLoading(false);
-        onClose();
-      }, 2000);
+      setLoading(false);
+      onClose();
     }
   };
 

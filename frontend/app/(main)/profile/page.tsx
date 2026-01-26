@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import api from "@/app/_extra/api/api";
 import { UserData } from "@/app/_extra/interfaces/user-data.interface";
@@ -11,7 +11,7 @@ function ProfilePage(): React.JSX.Element {
     username: "",
     firstName: "",
     lastName: "",
-    email: ""
+    email: "",
   });
 
   useEffect(() => {
@@ -22,11 +22,11 @@ function ProfilePage(): React.JSX.Element {
         username: data.username,
         firstName: data.firstName,
         lastName: data.lastName,
-        email: data.email
+        email: data.email,
       });
-    }
+    };
     fetchUser();
-    return () => { };
+    return () => {};
   }, []);
 
   const handleUpdateUserData = async (event: FormEvent<HTMLFormElement>) => {
@@ -38,25 +38,19 @@ function ProfilePage(): React.JSX.Element {
       lastName: updatingUserData?.lastName,
     });
     console.log(response.data);
-  }
+  };
 
   return (
-    <main
-      className="flex flex-col items-center min-w-190 h-full border-amber-200 solid border
-        box-border gap-3"
-    >
-      <div
-        className="h-23 aspect-square flex items-center justify-center rounded-full
-        bg-linear-to-r from-blue-500 to-blue-600"
-      >
-        <MdOutlinePerson className="h-4/7 w-auto" />
+    <main className="box-border flex flex-col items-center gap-3 pt-12 min-w-190 h-full solid">
+      <div className="flex justify-center items-center bg-linear-to-r from-blue-500 to-blue-600 rounded-full h-23 aspect-square">
+        <MdOutlinePerson className="w-auto h-4/7" />
       </div>
-      <h2 className="text-3xl font-bold">My Profile</h2>
+      <h2 className="font-bold text-3xl">My Profile</h2>
       <p className="text-gray-400">Manage your personal informations</p>
-      <section className="flex flex-col w-5/6 p-6 rounded-xl bg-slate-900 gap-6">
+      <section className="flex flex-col gap-6 bg-slate-900 p-6 rounded-xl w-5/6">
         <div className="flex flex-col gap-0.5 w-full">
-          <h3 className="text-2xl font-semibold">Personal Informations</h3>
-          <p className="text-sm text-gray-400">Update your register data</p>
+          <h3 className="font-semibold text-2xl">Personal Informations</h3>
+          <p className="text-gray-400 text-sm">Update your register data</p>
         </div>
         <form className="flex flex-col gap-4" onSubmit={(e) => handleUpdateUserData(e)}>
           <div className="flex flex-col gap-2 *:text-sm *:duration-200 *:ease-out">
@@ -65,23 +59,21 @@ function ProfilePage(): React.JSX.Element {
               type="text"
               name="username"
               id="username"
-              value={updatingUserData?.username || ''}
-              onChange={(e) => setUpdatingUserData(prev => ({ ...prev, username: e.target.value }))}
-              className="outline-none border rounded-xl p-2 border-slate-700 ring-2 ring-transparent
-              bg-slate-950 focus:ring-blue-500/80"
+              value={updatingUserData?.username || ""}
+              onChange={(e) => setUpdatingUserData((prev) => ({ ...prev, username: e.target.value }))}
+              className="bg-slate-950 p-2 border border-slate-700 rounded-xl outline-none ring-2 ring-transparent focus:ring-blue-500/80"
             />
           </div>
-          <div className="grid grid-cols-2 gap-x-10">
+          <div className="gap-x-10 grid grid-cols-2">
             <div className="flex flex-col gap-2 *:text-sm *:duration-200 *:ease-out">
               <label htmlFor="first-name">First Name</label>
               <input
                 type="text"
                 name="first-name"
                 id="first-name"
-                value={updatingUserData?.firstName || ''}
-                onChange={(e) => setUpdatingUserData(prev => ({ ...prev, firstName: e.target.value }))}
-                className="outline-none border rounded-xl p-2 border-slate-700 ring-2 ring-transparent
-                bg-slate-950 focus:ring-blue-500/80"
+                value={updatingUserData?.firstName || ""}
+                onChange={(e) => setUpdatingUserData((prev) => ({ ...prev, firstName: e.target.value }))}
+                className="bg-slate-950 p-2 border border-slate-700 rounded-xl outline-none ring-2 ring-transparent focus:ring-blue-500/80"
               />
             </div>
             <div className="flex flex-col gap-2 *:text-sm *:duration-200 *:ease-out">
@@ -90,10 +82,9 @@ function ProfilePage(): React.JSX.Element {
                 type="text"
                 name="lastName"
                 id="lastName"
-                value={updatingUserData?.lastName || ''}
-                onChange={(e) => setUpdatingUserData(prev => ({ ...prev, lastName: e.target.value }))}
-                className="outline-none border rounded-xl p-2 border-slate-700 ring-2 ring-transparent
-                bg-slate-950 focus:ring-blue-500/80"
+                value={updatingUserData?.lastName || ""}
+                onChange={(e) => setUpdatingUserData((prev) => ({ ...prev, lastName: e.target.value }))}
+                className="bg-slate-950 p-2 border border-slate-700 rounded-xl outline-none ring-2 ring-transparent focus:ring-blue-500/80"
               />
             </div>
           </div>
@@ -103,16 +94,12 @@ function ProfilePage(): React.JSX.Element {
               type="email"
               name="email"
               id="email"
-              value={updatingUserData?.email || ''}
+              value={updatingUserData?.email || ""}
               disabled
-              className="outline-none border rounded-xl p-2 border-slate-700 ring-2 ring-transparent
-              bg-slate-950 focus:ring-blue-500/80 cursor-not-allowed"
+              className="bg-slate-950 p-2 border border-slate-700 rounded-xl outline-none ring-2 ring-transparent focus:ring-blue-500/80 cursor-not-allowed"
             />
           </div>
-          <button
-            className="flex box-border justify-center items-center h-12 w-fit px-4 mt-2 bg-blue-500 rounded-lg hover:brightness-110
-            font-medium cursor-pointer hover:shadow-[0_0_12px_rgba(96,165,250,0.6)] duration-200 ease-out"
-          >
+          <button className="box-border flex justify-center items-center bg-blue-500 hover:shadow-[0_0_12px_rgba(96,165,250,0.6)] hover:brightness-110 mt-2 px-4 rounded-lg w-fit h-12 font-medium duration-200 ease-out cursor-pointer">
             Update information
           </button>
         </form>

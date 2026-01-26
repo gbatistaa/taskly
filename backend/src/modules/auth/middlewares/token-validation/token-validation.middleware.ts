@@ -41,8 +41,6 @@ export class TokenValidationMiddleware implements NestMiddleware {
           const payload: AccessTokenPayload =
             await this.jwtService.decode(accessToken);
 
-          console.log(payload);
-
           // Trying to find a refresh token of the payload user on the database
           const refreshTokenFound = await this.refreshTokenService.findOne(
             'userId',

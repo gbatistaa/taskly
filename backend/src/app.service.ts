@@ -15,7 +15,6 @@ export class AppService {
   }
 
   async createUsersMock(): Promise<UserDTO[]> {
-    console.log('woichoiwc');
     const mocks: UserInterface[] = createUsersMock(
       path.join(process.cwd(), 'src', 'modules', 'mocks.json'),
     );
@@ -27,8 +26,6 @@ export class AppService {
       );
       createdUsers.push(newUser);
     }
-
-    console.log(createdUsers);
 
     return createdUsers;
   }

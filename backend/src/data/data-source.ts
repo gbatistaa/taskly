@@ -3,14 +3,14 @@ import * as path from 'path';
 import * as dotenv from 'dotenv';
 import { isSQLite } from './database.config';
 
-dotenv.config({ path: './.env.production' });
+dotenv.config({ path: './.env' });
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 const commonOptions = {
   entities: [path.join(__dirname, '..', 'modules', '**', '*.entity.{ts,js}')],
   migrations: [path.join(__dirname, 'migrations', '*.{ts,js}')],
-  synchronize: !isProduction,
+  synchronize: false,
   logging: !isProduction,
 };
 

@@ -1,8 +1,12 @@
 import { Team } from "@/app/_extra/interfaces/team.interface";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaTasks } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { MdPeopleAlt, MdPersonAdd } from "react-icons/md";
+import TeamMembers from "./TeamMembers";
+import api from "@/app/_extra/api/api";
+import { UserData } from "@/app/_extra/interfaces/user-data.interface";
+import { toast } from "sonner";
 
 interface TeamContentProps {
   team: Team;
@@ -15,7 +19,27 @@ enum TeamTab {
 }
 
 export default function TeamContent({ team }: TeamContentProps): React.JSX.Element {
-  const [selectedTab, setSelectedTab] = useState<TeamTab>(TeamTab.MEMBERS);
+  const [selectedTab, setSelectedTab] = useState<TeamTab>(TeamTab.TASKS);
+  const [teamMembers, setTeamMembers] = useState<UserData[]>([]);
+
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      if (team && selectedTab === TeamTab.MEMBERS) {
+        try {
+          const { data } = await api.get(`/team/find-team-members/${team?.id}`);
+          setTeamMembers(data);
+        } catch (error) {
+          if (error instanceof Error) {
+            toast.error(error.message);
+          } else {
+            toast.error("An unknown error ocurred on fetching team members");
+          }
+        }
+      }
+    };
+
+    void fetchTeamMembers();
+  }, [selectedTab]);
 
   return (
     <section className="w-full h-full">
@@ -32,7 +56,7 @@ export default function TeamContent({ team }: TeamContentProps): React.JSX.Eleme
           Invite members
         </button>
       </div>
-      <main className="px-20 pt-10">
+      <main className="flex flex-col gap-4 px-20 pt-10">
         <div className="flex gap-2 bg-slate-800 p-2 rounded-xl w-fit">
           <label
             htmlFor="tasks"
@@ -83,6 +107,7 @@ export default function TeamContent({ team }: TeamContentProps): React.JSX.Eleme
             <span className="font-semibold text-sm">Configuration</span>
           </label>
         </div>
+        <TeamMembers members={teamMembers} />
       </main>
     </section>
   );

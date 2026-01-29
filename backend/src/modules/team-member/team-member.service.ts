@@ -14,12 +14,14 @@ import { treatKnownErrors } from '../common/errors/treatErrorCustomized';
 import { CreateTeamMemberDto } from './dto/create-team-member.dto';
 import { TeamMember } from './entities/team-member.entity';
 import { UpdateTeamMemberDto } from './dto/update-team-member.dto';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class TeamMemberService {
   constructor(
     private jwtService: JwtService,
     @InjectRepository(TeamMember) private repo: Repository<TeamMember>,
+    @InjectRepository(User) private userRepo: Repository<User>,
   ) {}
 
   async create(

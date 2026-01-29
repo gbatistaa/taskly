@@ -37,6 +37,12 @@ export class TeamController {
     return this.teamService.findById(id);
   }
 
+  @Get('/find-team-members/:id')
+  findTeamMembers(@Param('id') id: string) {
+    console.log(id);
+    return this.teamService.findTeamMembers(id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
     return this.teamService.update(id, updateTeamDto);

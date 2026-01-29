@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 import { CreateTeamInterface } from '../interfaces/creatable-team.interface';
 
 export class CreateTeamDto implements CreateTeamInterface {
@@ -10,4 +10,7 @@ export class CreateTeamDto implements CreateTeamInterface {
 
   @IsString()
   description: string;
+
+  @IsUUID()
+  userId: string;
 }

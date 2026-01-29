@@ -23,6 +23,7 @@ export class TeamMember extends CommonEntity implements TeamMemberInterface {
 
   @ManyToOne(() => Team, (team) => team.teamMembers, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'teamId' })
   team: Team;

@@ -14,11 +14,14 @@ import { CreateTeamDto } from './dto/create-team.dto';
 import { TeamDTO } from './dto/team.dto';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
+import { User } from '../user/entities/user.entity';
+import { UserDTO } from '../user/dto/user-dto';
 
 @Injectable()
 export class TeamService {
   constructor(
     @InjectRepository(Team) private repo: Repository<Team>,
+    @InjectRepository(User) private userRepo: Repository<User>,
     private jwtService: JwtService,
   ) {}
 
@@ -90,6 +93,37 @@ export class TeamService {
       }
 
       return plainToInstance(TeamDTO, teamFound);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+
+      throw new InternalServerErrorException(
+        'Unexpected error on finding one team',
+      );
+    }
+  }
+
+  async findTeamMembers(id: string): Promise<UserDTO[]> {
+    try {
+      const teamFound = await this.repo.findOne({
+        where: { id },
+        relations: ['teamMembers'],
+      });
+
+      if (!teamFound) {
+        throw new NotFoundException('Team searched was not found');
+      }
+
+      const members = await Promise.all(
+        teamFound.teamMembers.map(async (member) => {
+          return await this.userRepo.findOne({ where: { id: member.userId } });
+        }),
+      );
+
+      const membersDTO = members
+        .filter((member): member is User => member !== null)
+        .map((member) => plainToInstance(UserDTO, member));
+
+      return membersDTO;
     } catch (error: unknown) {
       treatKnownErrors(error);
 

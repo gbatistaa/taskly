@@ -18,9 +18,13 @@ enum TeamTab {
   CONFIGURATION,
 }
 
+interface UserMember extends UserData {
+  role: string;
+}
+
 export default function TeamContent({ team }: TeamContentProps): React.JSX.Element {
   const [selectedTab, setSelectedTab] = useState<TeamTab>(TeamTab.TASKS);
-  const [teamMembers, setTeamMembers] = useState<UserData[]>([]);
+  const [teamMembers, setTeamMembers] = useState<UserMember[]>([]);
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -107,7 +111,7 @@ export default function TeamContent({ team }: TeamContentProps): React.JSX.Eleme
             <span className="font-semibold text-sm">Configuration</span>
           </label>
         </div>
-        <TeamMembers members={teamMembers} />
+        {selectedTab === TeamTab.MEMBERS && <TeamMembers members={teamMembers} />}{" "}
       </main>
     </section>
   );

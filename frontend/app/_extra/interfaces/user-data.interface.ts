@@ -1,3 +1,5 @@
+import { TeamMembership } from "./team-membership.interface";
+
 export interface UserData {
   id: string;
   email: string;
@@ -5,4 +7,5 @@ export interface UserData {
   lastName: string;
   username: string;
   birthDate: string;
+  teamMemberships: TeamMembership[];
 }

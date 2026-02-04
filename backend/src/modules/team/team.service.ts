@@ -115,16 +115,28 @@ export class TeamService {
 
       const members = await Promise.all(
         teamFound.teamMembers.map(async (member) => {
-          return await this.userRepo.findOne({ where: { id: member.userId } });
+          return await this.userRepo.findOne({
+            where: { id: member.userId },
+            relations: ['teamMemberships'],
+          });
         }),
       );
 
       const membersDTO = members
         .filter((member): member is User => member !== null)
-        .map((member) => plainToInstance(UserDTO, member));
+        .map((member) => {
+          if (member.teamMemberships) {
+            member.teamMemberships = member.teamMemberships.filter(
+              (membership) => membership.teamId === id,
+            );
+          }
+
+          return plainToInstance(UserDTO, member);
+        });
 
       return membersDTO;
     } catch (error: unknown) {
+      console.log(error);
       treatKnownErrors(error);
 
       throw new InternalServerErrorException(

@@ -16,6 +16,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
     const fetchData = async () => {
       try {
         const { data }: { data: Team } = await api.get(`/team/${unwrappedParams.id}`);
+        console.log(data);
         setTeam(data);
       } catch (error) {
         if (error instanceof AxiosError) {

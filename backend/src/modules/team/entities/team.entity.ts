@@ -11,6 +11,7 @@ import {
   Unique,
 } from 'typeorm';
 import { TeamInterface } from '../interfaces/team.interface';
+import { TaskColumn } from 'src/modules/task-column/entities/task-column.entity';
 
 @Entity()
 @Unique(['ownerId', 'name'])
@@ -33,4 +34,7 @@ export class Team extends CommonEntity implements TeamInterface {
 
   @OneToMany(() => TeamMember, (teamMember) => teamMember.team)
   teamMembers: TeamMember[];
+
+  @OneToMany(() => TaskColumn, (taskColumn) => taskColumn.team)
+  taskColumns: TaskColumn[];
 }

@@ -23,7 +23,8 @@
     "migration:generate": "npm run typeorm -- migration:generate -d src/data/data-source.ts",
     "migration:create": "npm run typeorm -- migration:create",
     "migration:run": "npm run build && npm run typeorm migration:run -- -d dist/data/data-source.js",
-    "migration:revert": "npm run build && npm run typeorm migration:revert -- -d dist/data/data-source.js"
+    "migration:revert": "npm run build && npm run typeorm migration:revert -- -d dist/data/data-source.js",
+    "seed:columns": "ts-node -r tsconfig-paths/register src/data/seeds/task-column.seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.1.6",

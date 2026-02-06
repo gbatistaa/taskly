@@ -35,12 +35,12 @@ export class TeamMemberController {
     return this.teamMemberService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(':userId')
   update(
-    @Param('id') id: string,
+    @Param('userId') userId: string,
     @Body() updateTeamMemberDto: UpdateTeamMemberDto,
   ) {
-    return this.teamMemberService.update(id, updateTeamMemberDto);
+    return this.teamMemberService.update(userId, updateTeamMemberDto);
   }
 
   @Delete(':id')

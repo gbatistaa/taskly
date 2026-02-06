@@ -84,13 +84,15 @@ export class TeamMemberService {
   }
 
   async update(
-    id: string,
+    userId: string,
     updateTeamMemberDto: UpdateTeamMemberDto,
   ): Promise<TeamMember> {
     try {
-      const memberToUpdate = await this.repo.findOne({ where: { id } });
+      const memberToUpdate = await this.repo.findOne({ where: { userId } });
       if (!memberToUpdate) {
-        throw new NotFoundException(`Team member with id ${id} was not found!`);
+        throw new NotFoundException(
+          `Team member with id ${userId} was not found!`,
+        );
       }
 
       memberToUpdate.teamRole = updateTeamMemberDto.teamRole!;

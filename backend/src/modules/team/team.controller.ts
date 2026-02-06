@@ -39,7 +39,6 @@ export class TeamController {
 
   @Get('/find-team-members/:id')
   findTeamMembers(@Param('id') id: string) {
-    console.log(id);
     return this.teamService.findTeamMembers(id);
   }
 

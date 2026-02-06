@@ -14,6 +14,9 @@ import { AppDataSource } from './data/data-source';
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         autoLoadEntities: true,
+        synchronize: true,
+        logging: true,
+        logger: 'advanced-console',
       }),
       dataSourceFactory: async () => {
         if (!AppDataSource.isInitialized) {

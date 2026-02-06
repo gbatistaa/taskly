@@ -63,10 +63,15 @@ export class UserService {
     }
   }
 
-  async findOne<K extends keyof UserDTO>(prop: K, value: UserDTO[K]) {
+  async findOne<K extends keyof UserDTO>(
+    prop: K,
+    value: UserDTO[K],
+    options?: { relations?: string[] },
+  ) {
     try {
       const foundUser = await this.repo.findOne({
         where: { [prop]: value },
+        ...options,
       });
 
       if (!foundUser) {

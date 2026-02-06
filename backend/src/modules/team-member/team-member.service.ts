@@ -14,14 +14,12 @@ import { treatKnownErrors } from '../common/errors/treatErrorCustomized';
 import { CreateTeamMemberDto } from './dto/create-team-member.dto';
 import { TeamMember } from './entities/team-member.entity';
 import { UpdateTeamMemberDto } from './dto/update-team-member.dto';
-import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class TeamMemberService {
   constructor(
     private jwtService: JwtService,
     @InjectRepository(TeamMember) private repo: Repository<TeamMember>,
-    @InjectRepository(User) private userRepo: Repository<User>,
   ) {}
 
   async create(
@@ -107,18 +105,17 @@ export class TeamMemberService {
     }
   }
 
-  async remove(id: string) {
+  async remove(userId: string) {
     try {
-      const teamMemberToRemove = await this.repo.findOne({ where: { id } });
+      const result = await this.repo.delete({ userId });
 
-      if (!teamMemberToRemove) {
+      if (result.affected === 0) {
         throw new NotFoundException('Team member not found!');
       }
 
-      await this.repo.delete(teamMemberToRemove);
+      return result;
     } catch (error: unknown) {
       treatKnownErrors(error);
-
       throw new InternalServerErrorException('Error on removing team member');
     }
   }

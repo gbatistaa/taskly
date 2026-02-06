@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { AxiosError } from "axios";
 import { useAtom } from "jotai";
@@ -12,7 +12,7 @@ import { UserData } from "./_extra/interfaces/user-data.interface";
 
 export default function Home() {
   const [loading, setLoading] = useState(false);
-  const [userData, setUserData] = useAtom(userDataAtom);
+  const [_, setUserData] = useAtom(userDataAtom);
   const router = useRouter();
 
   useEffect(() => {
@@ -20,7 +20,6 @@ export default function Home() {
     const handleSiteAccess = async () => {
       try {
         const { data }: { data: UserData } = await api.get("/auth/me");
-        toast(data.id);
         setUserData(data);
         router.push("/dashboard");
       } catch (error: unknown) {
@@ -29,11 +28,10 @@ export default function Home() {
           toast.error(e.message);
         }
         router.push("/login");
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
-    }
+    };
 
     handleSiteAccess();
   }, []);
@@ -41,15 +39,10 @@ export default function Home() {
   return (
     <div>
       {loading ? (
-        <Vortex
-          visible={true}
-          ariaLabel="vortex-loading"
-          wrapperStyle={{}}
-          wrapperClass="h-40"
-          colors={['#ffffff']}
-        />
-      ) : <span>Olá</span>}
+        <Vortex visible={true} ariaLabel="vortex-loading" wrapperStyle={{}} wrapperClass="h-40" colors={["#ffffff"]} />
+      ) : (
+        <span>Olá</span>
+      )}
     </div>
-
   );
 }

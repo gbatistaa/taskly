@@ -3,10 +3,11 @@ import React, { useEffect, useState } from "react";
 import { FaTasks } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { MdPeopleAlt, MdPersonAdd } from "react-icons/md";
-import TeamMembers from "./TeamMembers";
 import api from "@/app/_extra/api/api";
 import { UserData } from "@/app/_extra/interfaces/user-data.interface";
 import { toast } from "sonner";
+import TeamConfiguration from "./TeamConfiguration";
+import TeamMembers from "./members/TeamMembers";
 
 interface TeamContentProps {
   team: Team;
@@ -111,7 +112,8 @@ export default function TeamContent({ team }: TeamContentProps): React.JSX.Eleme
             <span className="font-semibold text-sm">Configuration</span>
           </label>
         </div>
-        {selectedTab === TeamTab.MEMBERS && <TeamMembers members={teamMembers} />}{" "}
+        {selectedTab === TeamTab.MEMBERS && <TeamMembers members={teamMembers} teamId={team.id} />}{" "}
+        {selectedTab === TeamTab.CONFIGURATION && <TeamConfiguration name={team.name} description={team.description} />}
       </main>
     </section>
   );

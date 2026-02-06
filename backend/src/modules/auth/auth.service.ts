@@ -156,7 +156,9 @@ export class AuthService {
         throw new UnauthorizedException('Invalid access token');
       }
 
-      const user: UserDTO = await this.userService.findOne('id', payload.id);
+      const user: UserDTO = await this.userService.findOne('id', payload.id, {
+        relations: ['teamMemberships'],
+      });
 
       return plainToInstance(UserDTO, user);
     } catch (error: unknown) {

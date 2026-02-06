@@ -43,8 +43,8 @@ export class TeamMemberController {
     return this.teamMemberService.update(userId, updateTeamMemberDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.teamMemberService.remove(id);
+  @Delete(':userId')
+  remove(@Param('userId') userId: string) {
+    return this.teamMemberService.remove(userId);
   }
 }

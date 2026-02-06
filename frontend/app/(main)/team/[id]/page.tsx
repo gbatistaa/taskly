@@ -6,10 +6,12 @@ import React, { useEffect, useState } from "react";
 import TeamContent from "./components/TeamContent";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { useAtom } from "jotai";
+import { selectedTeamAtom } from "@/app/_extra/atoms/teams";
 
 export default function TeamPage({ params }: { params: Promise<{ id: string }> }): React.JSX.Element {
   const unwrappedParams = React.use(params);
-  const [team, setTeam] = useState<Team | null>(null);
+  const [team, setTeam] = useAtom(selectedTeamAtom);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {

@@ -44,6 +44,7 @@ export class TeamController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
+    console.log(updateTeamDto);
     return this.teamService.update(id, updateTeamDto);
   }
 

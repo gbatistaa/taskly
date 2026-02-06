@@ -147,23 +147,19 @@ export class TeamService {
 
   async update(id: string, updateTeamDto: UpdateTeamDto): Promise<TeamDTO> {
     try {
-      const teamToUpdate = await this.repo.findOne({
-        where: { id },
-      });
+      const team = await this.repo.findOne({ where: { id } });
 
-      if (!teamToUpdate) {
-        throw new NotFoundException('Team searched was not found');
+      if (!team) {
+        throw new NotFoundException('Team not found');
       }
 
-      teamToUpdate.name = updateTeamDto.name as string;
-      teamToUpdate.description = updateTeamDto.description as string;
+      this.repo.merge(team, updateTeamDto);
 
-      const updatedTeam = await this.repo.save(teamToUpdate);
+      const saved = await this.repo.save(team);
 
-      return plainToInstance(TeamDTO, updatedTeam);
+      return plainToInstance(TeamDTO, saved);
     } catch (error: unknown) {
       treatKnownErrors(error);
-
       throw new InternalServerErrorException('Failed to update team');
     }
   }
@@ -176,7 +172,7 @@ export class TeamService {
         throw new NotFoundException('Team to remove was not found');
       }
 
-      await this.repo.delete(teamFound);
+      await this.repo.delete({ id });
     } catch (error: unknown) {
       treatKnownErrors(error);
 

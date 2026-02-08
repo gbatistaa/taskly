@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { TaskColumnService } from './task-column.service';
 import { CreateTaskColumnDto } from './dto/create-task-column.dto';
 import { UpdateTaskColumnDto } from './dto/update-task-column.dto';
@@ -19,16 +27,19 @@ export class TaskColumnController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.taskColumnService.findOne(+id);
+    return this.taskColumnService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskColumnDto: UpdateTaskColumnDto) {
-    return this.taskColumnService.update(+id, updateTaskColumnDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateTaskColumnDto: UpdateTaskColumnDto,
+  ) {
+    return this.taskColumnService.update(id, updateTaskColumnDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.taskColumnService.remove(+id);
+    return this.taskColumnService.remove(id);
   }
 }

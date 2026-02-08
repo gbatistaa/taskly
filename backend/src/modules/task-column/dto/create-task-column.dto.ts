@@ -1,4 +1,4 @@
-import { IsHexColor, IsString } from 'class-validator';
+import { IsHexColor, IsNumber, IsString, IsUUID } from 'class-validator';
 
 export class CreateTaskColumnDto {
   @IsString()
@@ -6,4 +6,10 @@ export class CreateTaskColumnDto {
 
   @IsHexColor()
   color: string;
+
+  @IsNumber()
+  position: number;
+
+  @IsUUID()
+  teamId: string;
 }

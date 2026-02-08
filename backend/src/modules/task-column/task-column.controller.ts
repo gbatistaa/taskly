@@ -20,9 +20,9 @@ export class TaskColumnController {
     return this.taskColumnService.create(createTaskColumnDto);
   }
 
-  @Get()
-  findAll() {
-    return this.taskColumnService.findAll();
+  @Get(':teamId')
+  findAll(@Param('teamId') teamId: string) {
+    return this.taskColumnService.findAll(teamId);
   }
 
   @Get(':id')

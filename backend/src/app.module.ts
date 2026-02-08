@@ -7,6 +7,7 @@ import { RefreshTokenModule } from './modules/refresh-token/refresh-token.module
 import { TeamMemberModule } from './modules/team-member/team-member.module';
 import { TeamModule } from './modules/team/team.module';
 import { UserModule } from './modules/user/user.module';
+import { TaskColumnModule } from './modules/task-column/task-column.module';
 import { AppDataSource } from './data/data-source';
 
 @Module({
@@ -31,6 +32,7 @@ import { AppDataSource } from './data/data-source';
     RefreshTokenModule,
     TeamModule,
     TeamMemberModule,
+    TaskColumnModule,
   ],
   controllers: [AppController],
   providers: [AppService],

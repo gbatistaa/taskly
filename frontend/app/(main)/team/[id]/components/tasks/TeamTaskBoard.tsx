@@ -1,7 +1,34 @@
 import { FaPlus } from "react-icons/fa";
 import TaskColumn from "./TaskColumn";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { TaskColumnType } from "@/app/_extra/interfaces/task-column.interface";
+import api from "@/app/_extra/api/api";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 function TeamTaskBoard() {
+  const [taskColumns, setTaskColumns] = useState<TaskColumnType[]>([]);
+  const { id: teamId } = useParams();
+
+  useEffect(() => {
+    const fetchTaskColumns = async () => {
+      try {
+        const { data } = await api.get<TaskColumnType[]>(`/task-column/${teamId}`);
+        setTaskColumns(data);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          console.log(error.response);
+          toast.error(error.response?.data.message);
+        } else {
+          toast.error("Unexpected error on task column find");
+        }
+      }
+    };
+
+    fetchTaskColumns();
+  }, []);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
@@ -12,9 +39,16 @@ function TeamTaskBoard() {
         </button>
       </div>
       <div className="flex gap-4">
-        <TaskColumn id="1" name="To Do" color="#ef4444" position={0} teamId="1" />
-        <TaskColumn id="2" name="In Progress" color="#f59e0b" position={1} teamId="1" />
-        <TaskColumn id="3" name="Done" color="#10b981" position={2} teamId="1" />
+        {taskColumns.map((taskColumn) => (
+          <TaskColumn
+            key={taskColumn.id}
+            id={taskColumn.id}
+            name={taskColumn.name}
+            color={taskColumn.color}
+            position={taskColumn.position}
+            teamId={taskColumn.teamId}
+          />
+        ))}
       </div>
     </div>
   );

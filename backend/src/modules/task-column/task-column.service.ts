@@ -30,10 +30,13 @@ export class TaskColumnService {
     }
   }
 
-  async findAll(): Promise<TaskColumn[]> {
+  async findAll(teamId: string): Promise<TaskColumn[]> {
     try {
       const foundTaskColumns = await this.repo.find({
-        relations: ['tasks'],
+        where: { teamId },
+        order: {
+          position: 'ASC',
+        },
       });
 
       if (!foundTaskColumns) {

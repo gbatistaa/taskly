@@ -115,6 +115,7 @@ export class TaskColumnService {
         throw new NotFoundException('Task column to remove was not found');
       }
 
+      this.gateway.emitDelete(taskColumnToRemove.teamId, taskColumnToRemove.id);
       await this.repo.remove(taskColumnToRemove);
     } catch (error: unknown) {
       treatKnownErrors(error);

@@ -47,12 +47,14 @@ function TeamTaskBoard() {
       socket.emit("join-team", room);
     });
 
-    // ADICIONE ISTO PARA VER O ERRO
     socket.on("connect_error", (err) => {
       console.error("❌ ERRO DE CONEXÃO:", err.message);
     });
 
-    socket.on("create", (data) => console.log("Evento Create recebido:", data));
+    socket.on("create", (data) => {
+      console.log("Evento Create recebido:", data);
+      setTaskColumns((prev) => [...prev, data]);
+    });
 
     socket.on("update", (data) => {
       console.log("Column updated:", data);

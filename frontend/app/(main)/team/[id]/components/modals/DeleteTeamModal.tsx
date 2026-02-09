@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { IoClose, IoWarning } from "react-icons/io5";
 import { Vortex } from "react-loader-spinner";
 
@@ -11,6 +11,32 @@ interface DeleteTeamModalProps {
 function DeleteTeamModal({ teamName, onClose, onConfirm }: DeleteTeamModalProps): React.JSX.Element {
   const [loading, setLoading] = useState(false);
   const [confirmationText, setConfirmationText] = useState("");
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = useCallback(() => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 200);
+  }, [onClose]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleClose]);
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLElement>) => {
+    if (e.target === e.currentTarget) {
+      handleClose();
+    }
+  };
 
   const REQUIRED_TEXT = "i want to delete my team";
   const isConfirmationValid = confirmationText.toLowerCase() === REQUIRED_TEXT;
@@ -25,12 +51,17 @@ function DeleteTeamModal({ teamName, onClose, onConfirm }: DeleteTeamModalProps)
   };
 
   return (
-    <section className="top-0 left-0 z-50 fixed inset-0 flex justify-center items-center bg-black/70 w-screen h-screen">
-      <main className="box-border flex flex-col gap-6 bg-slate-900 p-6 border border-slate-700 rounded-xl w-125 solid">
+    <section
+      className={`top-0 left-0 z-50 fixed inset-0 flex justify-center items-center bg-black/70 w-screen h-screen transition-opacity duration-200 ${isClosing ? "opacity-0" : "opacity-100"}`}
+      onClick={handleBackdropClick}
+    >
+      <main
+        className={`box-border flex flex-col gap-6 bg-slate-900 p-6 border border-slate-700 rounded-xl w-125 solid transition-all duration-200 ${isClosing ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
+      >
         <header className="flex flex-col gap-2">
           <div className="flex justify-between">
             <h1 className="font-semibold text-2xl">Delete team</h1>
-            <button type="button" onClick={onClose}>
+            <button type="button" onClick={handleClose}>
               <IoClose size={24} className="hover:-rotate-90 duration-400 cursor-pointer" />
             </button>
           </div>
@@ -67,7 +98,7 @@ function DeleteTeamModal({ teamName, onClose, onConfirm }: DeleteTeamModalProps)
           <div className="flex gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               className="box-border flex flex-1 justify-center items-center bg-slate-800 hover:bg-slate-700 rounded-lg h-12 font-medium duration-300 ease-out cursor-pointer"
             >
               Cancel

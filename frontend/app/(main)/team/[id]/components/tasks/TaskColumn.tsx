@@ -28,7 +28,11 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
       </button>
 
       {isEditModalOpen && (
-        <TaskColumnEditModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} taskColumn={{}} />
+        <TaskColumnEditModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          taskColumn={{ id, name, color, position, teamId }}
+        />
       )}
     </div>
   );

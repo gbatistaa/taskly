@@ -1,26 +1,127 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Task } from './entities/task.entity';
+import { Repository } from 'typeorm';
+import { treatKnownErrors } from '../common/errors/treatErrorCustomized';
+import { TaskColumnService } from '../task-column/task-column.service';
+import { TaskGateway } from './task.gateway';
 
 @Injectable()
 export class TaskService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+  constructor(
+    @InjectRepository(Task) private readonly repo: Repository<Task>,
+    private readonly taskColumnService: TaskColumnService,
+    private readonly taskGateway: TaskGateway,
+  ) {}
+
+  async create(createTaskDto: CreateTaskDto) {
+    try {
+      const position = await this.repo.count({
+        where: { columnId: createTaskDto.columnId },
+      });
+
+      const task = this.repo.create({
+        ...createTaskDto,
+        position,
+      });
+
+      return await this.repo.save(task);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+      throw new InternalServerErrorException(
+        'Unexpected error on task creation',
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all task`;
+  async findAll(columnId: string): Promise<Task[]> {
+    try {
+      const column = await this.taskColumnService.findOne(columnId);
+
+      if (!column) {
+        throw new NotFoundException('Column not found');
+      }
+
+      return this.repo.find({
+        where: { columnId },
+        order: { position: 'ASC' },
+      });
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+      throw new InternalServerErrorException(
+        'Unexpected error on task retrieval',
+      );
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
+  async findOne(id: string): Promise<Task> {
+    try {
+      const task = await this.repo.findOne({
+        where: { id },
+      });
+
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+
+      return task;
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+      throw new InternalServerErrorException(
+        'Unexpected error on task retrieval',
+      );
+    }
   }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
+  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<Task> {
+    try {
+      const task = await this.repo.preload({
+        id,
+        ...updateTaskDto,
+      });
+
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+
+      const updatedTask = await this.repo.save(task);
+      const teamId = updatedTask.column.teamId;
+
+      this.taskGateway.emitUpdate(teamId, updatedTask);
+
+      return updatedTask;
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+      throw new InternalServerErrorException('Unexpected error on task update');
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
+  async remove(id: string): Promise<void> {
+    try {
+      const task = await this.repo.findOne({
+        where: { id },
+      });
+
+      if (!task) {
+        throw new NotFoundException('Task not found');
+      }
+
+      const teamId = task.column.teamId;
+
+      this.taskGateway.emitDelete(teamId, id);
+
+      await this.repo.remove(task);
+    } catch (error: unknown) {
+      treatKnownErrors(error);
+      throw new InternalServerErrorException(
+        'Unexpected error on task deletion',
+      );
+    }
   }
 }

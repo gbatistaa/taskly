@@ -6,6 +6,7 @@ import { IoClose } from "react-icons/io5";
 import { toast } from "sonner";
 
 const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899"];
+const fixedColumns = ["To Do", "In Progress", "Done"];
 
 interface TaskColumnModalProps {
   isOpen: boolean;
@@ -100,20 +101,22 @@ function TaskColumnModal({ isOpen, onClose, mode, taskColumn }: TaskColumnModalP
         </header>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="name" className="text-gray-300 text-sm">
-              Column Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              autoComplete="off"
-              placeholder="Enter column name..."
-              value={formState.name}
-              onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-              className="bg-slate-950 px-3 py-2 border border-slate-700 rounded-xl outline-none ring-2 ring-transparent focus:ring-blue-500/80 duration-300 ease-out"
-            />
-          </div>
+          {!fixedColumns.includes(formState.name) && (
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name" className="text-gray-300 text-sm">
+                Column Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                autoComplete="off"
+                placeholder="Enter column name..."
+                value={formState.name}
+                onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                className="bg-slate-950 px-3 py-2 border border-slate-700 rounded-xl outline-none ring-2 ring-transparent focus:ring-blue-500/80 duration-300 ease-out"
+              />
+            </div>
+          )}
 
           <div className="flex flex-col gap-4">
             <label htmlFor="color" className="text-gray-300 text-sm">

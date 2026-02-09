@@ -6,7 +6,7 @@ import { TaskColumnType } from "@/app/_extra/interfaces/task-column.interface";
 import api from "@/app/_extra/api/api";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
-import TaskColumnModal from "./TaskColumnEditModal";
+import TaskColumnModal from "./modals/TaskColumnEditModal";
 import { createSocketClient } from "@/app/_extra/socket";
 import { io } from "socket.io-client";
 

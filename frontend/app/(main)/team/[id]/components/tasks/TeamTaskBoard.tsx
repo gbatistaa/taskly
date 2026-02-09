@@ -6,9 +6,11 @@ import { TaskColumnType } from "@/app/_extra/interfaces/task-column.interface";
 import api from "@/app/_extra/api/api";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import TaskColumnModal from "./TaskColumnEditModal";
 
 function TeamTaskBoard() {
   const [taskColumns, setTaskColumns] = useState<TaskColumnType[]>([]);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { id: teamId } = useParams();
 
   useEffect(() => {
@@ -33,23 +35,36 @@ function TeamTaskBoard() {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <h1 className="font-semibold text-2xl">Task Board</h1>
-        <button className="flex items-center gap-2 bg-blue-500 hover:bg-blue-500/70 px-4 py-2 rounded-xl text-white duration-300 cursor-pointer">
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-500/70 px-4 py-2 rounded-xl text-white duration-300 cursor-pointer"
+        >
           <FaPlus className="w-3 h-auto" />
           <span>Add Column</span>
         </button>
       </div>
       <div className="flex gap-4">
-        {taskColumns.map((taskColumn) => (
-          <TaskColumn
-            key={taskColumn.id}
-            id={taskColumn.id}
-            name={taskColumn.name}
-            color={taskColumn.color}
-            position={taskColumn.position}
-            teamId={taskColumn.teamId}
-          />
-        ))}
+        {taskColumns.map((taskColumn) => {
+          return (
+            <TaskColumn
+              key={taskColumn.id}
+              id={taskColumn.id}
+              name={taskColumn.name}
+              color={taskColumn.color}
+              position={taskColumn.position}
+              teamId={taskColumn.teamId}
+            />
+          );
+        })}
       </div>
+      {isAddModalOpen && (
+        <TaskColumnModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          mode="create"
+          taskColumn={{ teamId: Array.isArray(teamId) ? teamId[0] : teamId! }}
+        />
+      )}
     </div>
   );
 }

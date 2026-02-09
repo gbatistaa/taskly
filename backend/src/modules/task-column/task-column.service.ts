@@ -9,17 +9,28 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TaskColumn } from './entities/task-column.entity';
 import { Repository } from 'typeorm';
 import { treatKnownErrors } from '../common/errors/treatErrorCustomized';
+import { TaskColumnGateway } from './task-column.gateway';
 
 @Injectable()
 export class TaskColumnService {
   constructor(
     @InjectRepository(TaskColumn) private repo: Repository<TaskColumn>,
+    private readonly gateway: TaskColumnGateway,
   ) {}
 
   async create(createTaskColumnDto: CreateTaskColumnDto): Promise<TaskColumn> {
     try {
-      const taskColumn = this.repo.create(createTaskColumnDto);
+      const position = await this.repo.count({
+        where: { teamId: createTaskColumnDto.teamId },
+      });
+
+      const taskColumn = this.repo.create({
+        ...createTaskColumnDto,
+        position,
+      });
       const dbTaskColumn = await this.repo.save(taskColumn);
+
+      this.gateway.emitCreate(dbTaskColumn.teamId, dbTaskColumn);
 
       return dbTaskColumn;
     } catch (error: unknown) {
@@ -74,16 +85,20 @@ export class TaskColumnService {
 
   async update(id: string, updateTaskColumnDto: UpdateTaskColumnDto) {
     try {
-      const taskColumnToUpdate = await this.repo.findOneBy({ id });
+      const entity = await this.repo.preload({
+        id,
+        ...updateTaskColumnDto,
+      });
 
-      if (!taskColumnToUpdate) {
-        throw new NotFoundException('Task column to update was not found');
+      if (!entity) {
+        throw new NotFoundException('Task column not found');
       }
 
-      taskColumnToUpdate.name = updateTaskColumnDto.name as string;
-      taskColumnToUpdate.position = updateTaskColumnDto.position as number;
+      const updatedColumn = await this.repo.save(entity);
 
-      await this.repo.save(taskColumnToUpdate);
+      this.gateway.emitUpdate(updatedColumn.teamId, updatedColumn);
+
+      return updatedColumn;
     } catch (error: unknown) {
       treatKnownErrors(error);
       throw new InternalServerErrorException(

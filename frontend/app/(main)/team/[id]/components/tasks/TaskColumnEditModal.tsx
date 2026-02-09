@@ -1,6 +1,9 @@
+import api from "@/app/_extra/api/api";
 import { TaskColumnType } from "@/app/_extra/interfaces/task-column.interface";
+import { AxiosError } from "axios";
 import { useState, useEffect, useCallback } from "react";
 import { IoClose } from "react-icons/io5";
+import { toast } from "sonner";
 
 const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899"];
 
@@ -50,9 +53,30 @@ function TaskColumnModal({ isOpen, onClose, mode, taskColumn }: TaskColumnModalP
     }
   };
 
-  const handleSave = () => {
-    // TODO: Implementar lógica de salvar/criar
-    onClose();
+  const handleSave = async () => {
+    try {
+      if (isEditMode) {
+        await api.patch(`/task-column/${taskColumn?.id}`, {
+          name: formState.name,
+          color: formState.color,
+        });
+        toast.success("Column updated successfully!");
+      } else {
+        await api.post(`/task-column`, {
+          name: formState.name,
+          color: formState.color,
+          teamId: taskColumn?.teamId,
+        });
+        toast.success("Column created successfully!");
+      }
+      handleClose();
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
   };
 
   return (

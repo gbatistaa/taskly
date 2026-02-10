@@ -31,7 +31,7 @@ export class TokenValidationMiddleware implements NestMiddleware {
       );
 
       // console.log(payload);
-      req.payload = payload;
+      req.user = payload;
 
       return next();
     } catch (error: unknown) {

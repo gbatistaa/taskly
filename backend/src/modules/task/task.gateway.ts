@@ -1,15 +1,12 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskDto } from './dto/task.dto';
 
 @WebSocketGateway({
   port: 80,
@@ -19,17 +16,9 @@ import { UpdateTaskDto } from './dto/update-task.dto';
     credentials: true,
   },
 })
-export class TaskGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class TaskGateway {
   @WebSocketServer()
   server: Server;
-
-  handleConnection(client: Socket) {
-    console.log('Client connected:', client.id);
-  }
-
-  handleDisconnect(client: Socket) {
-    console.log('Client disconnected:', client.id);
-  }
 
   @SubscribeMessage('join-team')
   async handleJoinTeam(
@@ -39,11 +28,11 @@ export class TaskGateway implements OnGatewayConnection, OnGatewayDisconnect {
     await client.join(teamId);
   }
 
-  emitCreate(teamId: string, payload: CreateTaskDto) {
+  emitCreate(teamId: string, payload: TaskDto) {
     this.server.to(teamId).emit('create', payload);
   }
 
-  emitUpdate(teamId: string, payload: UpdateTaskDto) {
+  emitUpdate(teamId: string, payload: TaskDto) {
     this.server.to(teamId).emit('update', payload);
   }
 

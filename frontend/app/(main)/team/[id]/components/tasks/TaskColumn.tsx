@@ -4,12 +4,13 @@ import { FaPencil } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import TaskColumnModal from "./modals/TaskColumnEditModal";
 import TaskColumnDeleteModal from "./modals/TaskColumnDeleteModal";
-import TaskCreateModal from "./modals/TaskCreateModal";
+import TaskModal from "./modals/TaskModal";
 import Task from "./Task";
 import { TaskType } from "@/app/_extra/interfaces/task.interface";
 import api from "@/app/_extra/api/api";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { useMySocket } from "@/app/_extra/hooks/useMySocket";
 
 const fixedColumns = ["To Do", "In Progress", "Done"];
 
@@ -18,6 +19,8 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [tasks, setTasks] = useState<TaskType[]>([]);
+
+  const socket = useMySocket({ namespace: "task", room: id });
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -35,6 +38,29 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
 
     void fetchTasks();
   }, [id]);
+
+  // Socket listeners for real-time task updates
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("create", (task: TaskType) => {
+      setTasks((prevTasks) => [...prevTasks, task]);
+    });
+
+    socket.on("update", (task: TaskType) => {
+      setTasks((prevTasks) => prevTasks.map((t) => (t.id === task.id ? task : t)));
+    });
+
+    socket.on("delete", (id: string) => {
+      setTasks((prevTasks) => prevTasks.filter((t) => t.id !== id));
+    });
+
+    return () => {
+      socket.off("create");
+      socket.off("update");
+      socket.off("delete");
+    };
+  }, [socket]);
 
   return (
     <div className="flex flex-col gap-2 bg-slate-800 border border-slate-700 rounded-xl w-72 min-h-96">
@@ -64,7 +90,7 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
         </div>
         <div className="flex flex-col flex-1 gap-2 p-2">
           {tasks.map((task) => {
-            return <Task key={task.id} task={task} />;
+            return <Task key={task.id} task={task} columnId={id} />;
           })}
         </div>
         <button
@@ -89,7 +115,7 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
             onClose={() => setIsDeleteModalOpen(false)}
           />
         )}
-        {isTaskModalOpen && <TaskCreateModal onClose={() => setIsTaskModalOpen(false)} teamId={teamId} columnId={id} />}
+        {isTaskModalOpen && <TaskModal onClose={() => setIsTaskModalOpen(false)} mode="create" columnId={id} />}
       </div>
     </div>
   );

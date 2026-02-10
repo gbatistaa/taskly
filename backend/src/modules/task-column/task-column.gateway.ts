@@ -1,8 +1,6 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -19,19 +17,9 @@ import { UpdateTaskColumnDto } from './dto/update-task-column.dto';
     credentials: true,
   },
 })
-export class TaskColumnGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+export class TaskColumnGateway {
   @WebSocketServer()
   server: Server;
-
-  handleConnection(client: Socket) {
-    console.log('socket connected', client.id);
-  }
-
-  handleDisconnect(client: Socket) {
-    console.log('socket disconnected', client.id);
-  }
 
   @SubscribeMessage('join-team')
   async handleJoinTeam(

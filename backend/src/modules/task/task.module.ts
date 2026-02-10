@@ -5,9 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { TaskGateway } from './task.gateway';
 import { TaskColumnModule } from '../task-column/task-column.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task]), TaskColumnModule],
+  imports: [TypeOrmModule.forFeature([Task]), TaskColumnModule, UserModule],
   controllers: [TaskController],
   providers: [TaskService, TaskGateway],
   exports: [TaskService],

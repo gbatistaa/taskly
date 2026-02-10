@@ -4,6 +4,7 @@ import { TeamMember } from 'src/modules/team-member/entities/team-member.entity'
 import { Team } from 'src/modules/team/entities/team.entity';
 import { Column, Entity, OneToMany, Unique } from 'typeorm';
 import { UserInterface } from '../interfaces/user.interface';
+import { Task } from 'src/modules/task/entities/task.entity';
 
 @Entity()
 @Unique(['cpf'])
@@ -43,4 +44,7 @@ export class User extends CommonEntity implements UserInterface {
   // Times que ele participa (TeamMember)
   @OneToMany(() => TeamMember, (teamMember) => teamMember.user)
   teamMemberships: TeamMember[];
+
+  @OneToMany(() => Task, (task) => task.creator)
+  createdTasks: Task[];
 }

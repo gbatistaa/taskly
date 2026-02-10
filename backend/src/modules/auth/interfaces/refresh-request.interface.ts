@@ -6,5 +6,5 @@ export interface RefreshRequest extends Request {
     accessToken: string;
   };
 
-  payload?: AccessTokenPayload;
+  user?: AccessTokenPayload;
 }

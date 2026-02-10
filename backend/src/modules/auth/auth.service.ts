@@ -120,15 +120,15 @@ export class AuthService {
 
   async refresh(req: RefreshRequest) {
     try {
-      const { payload } = req;
+      const { user } = req;
 
-      if (!payload) return;
+      if (!user) return;
 
       // Verify if refresh token is on the database:
 
       const refreshTokenFound = await this.refreshTokenService.findOne(
         'userId',
-        payload.id,
+        user.id,
       );
 
       if (!refreshTokenFound) {

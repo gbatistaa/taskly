@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { treatKnownErrors } from '../common/errors/treatErrorCustomized';
 import { TaskColumnService } from '../task-column/task-column.service';
 import { TaskGateway } from './task.gateway';
+import type { AuthenticatedRequest } from './interfaces/authenticated-request.interface';
 
 @Injectable()
 export class TaskService {
@@ -20,7 +21,8 @@ export class TaskService {
     private readonly taskGateway: TaskGateway,
   ) {}
 
-  async create(createTaskDto: CreateTaskDto) {
+  async create(createTaskDto: CreateTaskDto, req: AuthenticatedRequest) {
+    const { user } = req;
     try {
       const position = await this.repo.count({
         where: { columnId: createTaskDto.columnId },
@@ -29,10 +31,19 @@ export class TaskService {
       const task = this.repo.create({
         ...createTaskDto,
         position,
+        creatorId: user?.id,
       });
 
-      return await this.repo.save(task);
+      const savedTask = await this.repo.save(task);
+
+      this.taskGateway.emitCreate(savedTask.columnId, {
+        ...savedTask,
+        description: savedTask.description ?? '',
+      });
+
+      return savedTask;
     } catch (error: unknown) {
+      console.log(error);
       treatKnownErrors(error);
       throw new InternalServerErrorException(
         'Unexpected error on task creation',
@@ -91,12 +102,16 @@ export class TaskService {
       }
 
       const updatedTask = await this.repo.save(task);
-      const teamId = updatedTask.column.teamId;
+      const columnId = updatedTask.columnId;
 
-      this.taskGateway.emitUpdate(teamId, updatedTask);
+      this.taskGateway.emitUpdate(columnId, {
+        ...updatedTask,
+        description: updatedTask.description ?? '',
+      });
 
       return updatedTask;
     } catch (error: unknown) {
+      console.log(error);
       treatKnownErrors(error);
       throw new InternalServerErrorException('Unexpected error on task update');
     }
@@ -112,9 +127,9 @@ export class TaskService {
         throw new NotFoundException('Task not found');
       }
 
-      const teamId = task.column.teamId;
+      const columnId = task.columnId;
 
-      this.taskGateway.emitDelete(teamId, id);
+      this.taskGateway.emitDelete(columnId, id);
 
       await this.repo.remove(task);
     } catch (error: unknown) {

@@ -4,4 +4,6 @@ export interface TaskType {
   description: string;
   position: number;
   columnId: string;
+  creatorId: string;
+  createdAt: Date;
 }

@@ -1,8 +1,16 @@
-import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 import { CreatableTaskInterface } from '../interfaces/creatable-task.interface';
 
 export class CreateTaskDto implements CreatableTaskInterface {
   @IsString()
+  @MinLength(3)
   @MaxLength(255)
   title: string;
 
@@ -12,5 +20,6 @@ export class CreateTaskDto implements CreatableTaskInterface {
   description: string;
 
   @IsUUID()
+  @IsNotEmpty()
   columnId: string;
 }

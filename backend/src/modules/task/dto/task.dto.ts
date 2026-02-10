@@ -15,4 +15,7 @@ export class TaskDto {
 
   @Expose()
   columnId: string;
+
+  @Expose()
+  createdAt: Date;
 }

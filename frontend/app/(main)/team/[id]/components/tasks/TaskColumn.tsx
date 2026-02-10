@@ -1,10 +1,13 @@
 import { TaskColumnType } from "@/app/_extra/interfaces/task-column.interface";
 import { FaPlus, FaTrashAlt } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskColumnModal from "./modals/TaskColumnEditModal";
 import TaskColumnDeleteModal from "./modals/TaskColumnDeleteModal";
 import TaskCreateModal from "./modals/TaskCreateModal";
+import Task from "./Task";
+import { TaskType } from "@/app/_extra/interfaces/task.interface";
+import api from "@/app/_extra/api/api";
 
 const fixedColumns = ["To Do", "In Progress", "Done"];
 
@@ -12,6 +15,19 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const { data } = await api.get(`/task-column/${id}`);
+        setTasks(data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    };
+    fetchTasks();
+  }, [id]);
 
   return (
     <div className="flex flex-col gap-2 bg-slate-800 border border-slate-700 rounded-xl w-72 min-h-96">
@@ -39,7 +55,11 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
             )}
           </div>
         </div>
-        <div className="flex flex-col flex-1 gap-2 p-2"></div>
+        <div className="flex flex-col flex-1 gap-2 p-2">
+          {tasks.map((task) => (
+            <Task key={task.id} task={task} />
+          ))}
+        </div>
         <button
           className="flex items-center gap-2 px-4 py-3 border-slate-700 border-t hover:cursor-pointer"
           onClick={() => setIsTaskModalOpen(true)}
@@ -62,7 +82,7 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
             onClose={() => setIsDeleteModalOpen(false)}
           />
         )}
-        {isTaskModalOpen && <TaskCreateModal onClose={() => setIsTaskModalOpen(false)} teamId={teamId} />}
+        {isTaskModalOpen && <TaskCreateModal onClose={() => setIsTaskModalOpen(false)} teamId={teamId} columnId={id} />}
       </div>
     </div>
   );

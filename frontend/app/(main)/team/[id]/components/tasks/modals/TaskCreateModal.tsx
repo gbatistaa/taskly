@@ -1,35 +1,55 @@
 import { IoClose } from "react-icons/io5";
 import { useActionState, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import api from "@/app/_extra/api/api";
+import { AxiosError } from "axios";
 
 interface TaskCreateModalProps {
   onClose: () => void;
   teamId: string;
+  columnId: string;
 }
 
 interface TaskCreateState {
-  name: string;
+  title: string;
   description: string;
 }
 
-const createTaskAction = async (prevState: TaskCreateState, formData: FormData) => {
-  const name = formData.get("name") as string;
-  const description = formData.get("description") as string;
+// O primeiro argumento agora é o que injetaremos via bind
+const createTaskAction = async (columnId: string, prev: TaskCreateState, formData: FormData) => {
+  try {
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
 
-  return {
-    name,
-    description,
-  };
+    const { data } = await api.post(`/task`, { title, description, columnId });
+    console.log(data);
+
+    toast.success("Task created");
+
+    return { title: "", description: "" };
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      console.log(error.response);
+      toast.error(error.response?.data.message);
+    } else {
+      toast.error("Failed to create task");
+    }
+    return { title: "", description: "" };
+  }
 };
 
-function TaskCreateModal({ onClose, teamId }: TaskCreateModalProps) {
+function TaskCreateModal({ onClose, teamId, columnId }: TaskCreateModalProps) {
   const [isClosing, setIsClosing] = useState(false);
   const [formState, setFormState] = useState<TaskCreateState>({
-    name: "",
+    title: "",
     description: "",
   });
-  const [_, action, isPending] = useActionState<TaskCreateState, FormData>(createTaskAction, {
-    name: "",
+
+  // Injecting columnId into the action
+  const createTaskWithId = createTaskAction.bind(null, columnId);
+
+  const [state, action, isPending] = useActionState(createTaskWithId, {
+    title: "",
     description: "",
   });
 
@@ -78,16 +98,17 @@ function TaskCreateModal({ onClose, teamId }: TaskCreateModalProps) {
 
         <form className="flex flex-col gap-4" action={action}>
           <div className="flex flex-col gap-2">
-            <label htmlFor="name" className="text-gray-300 text-sm">
+            <label htmlFor="title" className="text-gray-300 text-sm">
               Task Name
             </label>
             <input
               type="text"
-              id="name"
+              id="title"
+              name="title"
               autoComplete="off"
-              placeholder="Enter task name..."
-              value={formState.name}
-              onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+              placeholder="Enter task title..."
+              value={formState.title}
+              onChange={(e) => setFormState({ ...formState, title: e.target.value })}
               className="bg-slate-950 px-3 py-2 border border-slate-700 rounded-xl outline-none ring-2 ring-transparent focus:ring-blue-500/80 duration-300 ease-out"
             />
           </div>
@@ -96,6 +117,8 @@ function TaskCreateModal({ onClose, teamId }: TaskCreateModalProps) {
             <div className="flex flex-col gap-2">
               <span className="text-gray-400 text-xs">Task Description</span>
               <textarea
+                id="description"
+                name="description"
                 value={formState.description}
                 onChange={(e) => setFormState({ ...formState, description: e.target.value })}
                 className="bg-slate-950 px-3 py-2 border border-slate-700 rounded-xl outline-none ring-2 ring-transparent focus:ring-blue-500/80 min-h-20 duration-300 ease-out resize-none"

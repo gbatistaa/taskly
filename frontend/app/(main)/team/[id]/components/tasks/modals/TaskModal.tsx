@@ -89,6 +89,20 @@ function TaskModal({ onClose, mode, columnId, task }: TaskModalProps) {
     }
   };
 
+  const handleDeleteTask = async () => {
+    try {
+      await api.delete(`/task/${task?.id}`);
+      toast.success("Task deleted successfully!");
+      handleClose();
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+      } else {
+        toast.error("Failed to delete task");
+      }
+    }
+  };
+
   return (
     <section
       className={`top-0 left-0 z-50 fixed inset-0 flex justify-center items-center bg-black/70 w-screen h-screen transition-opacity duration-200 ${isClosing ? "opacity-0" : "opacity-100"}`}
@@ -138,6 +152,19 @@ function TaskModal({ onClose, mode, columnId, task }: TaskModalProps) {
               />
             </div>
           </div>
+
+          {isEditMode && (
+            <div className="flex flex-col gap-2">
+              <h2 className="font-semibold text-red-500 text-lg">Danger Zone</h2>
+              <button
+                type="button"
+                onClick={handleDeleteTask}
+                className="box-border flex flex-1 justify-center items-center bg-red-500 hover:bg-red-500/60 disabled:opacity-50 px-3 py-2 rounded-lg w-fit font-medium text-white duration-300 ease-out cursor-pointer"
+              >
+                Delete Task
+              </button>
+            </div>
+          )}
 
           <div className="flex gap-3">
             <button

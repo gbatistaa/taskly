@@ -7,13 +7,15 @@ import api from "@/app/_extra/api/api";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
 import TaskColumnModal from "./modals/TaskColumnEditModal";
-import { createSocketClient } from "@/app/_extra/socket";
-import { io } from "socket.io-client";
+import { useMySocket } from "@/app/_extra/hooks/useMySocket";
 
 function TeamTaskBoard() {
   const [taskColumns, setTaskColumns] = useState<TaskColumnType[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const { id: teamId } = useParams();
+
+  const room = Array.isArray(teamId) ? teamId[0] : (teamId ?? "");
+  const socket = useMySocket({ namespace: "task-column", room });
 
   useEffect(() => {
     const fetchTaskColumns = async () => {
@@ -34,22 +36,7 @@ function TeamTaskBoard() {
   }, []);
 
   useEffect(() => {
-    if (!teamId) return;
-
-    const socket = io("http://localhost:4000/task-column", {
-      withCredentials: true,
-    });
-
-    socket.on("connect", () => {
-      console.log("✅ SOCKET CONECTADO! ID:", socket.id);
-      const room = Array.isArray(teamId) ? teamId[0] : teamId;
-      console.log("Tentando entrar na sala:", room);
-      socket.emit("join-team", room);
-    });
-
-    socket.on("connect_error", (err) => {
-      console.error("❌ ERRO DE CONEXÃO:", err.message);
-    });
+    if (!socket) return;
 
     socket.on("create", (data) => {
       console.log("Evento Create recebido:", data);
@@ -67,9 +54,11 @@ function TeamTaskBoard() {
     });
 
     return () => {
-      socket.disconnect();
+      socket.off("create");
+      socket.off("update");
+      socket.off("delete");
     };
-  }, [teamId]);
+  }, [socket]);
 
   return (
     <div className="flex flex-col gap-4">

@@ -16,7 +16,12 @@ interface TaskCreateState {
 }
 
 // O primeiro argumento agora é o que injetaremos via bind
-const createTaskAction = async (columnId: string, prev: TaskCreateState, formData: FormData) => {
+const createTaskAction = async (
+  columnId: string,
+  handleClose: () => void,
+  prev: TaskCreateState,
+  formData: FormData,
+) => {
   try {
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
@@ -25,6 +30,7 @@ const createTaskAction = async (columnId: string, prev: TaskCreateState, formDat
     console.log(data);
 
     toast.success("Task created");
+    handleClose();
 
     return { title: "", description: "" };
   } catch (error) {
@@ -45,14 +51,6 @@ function TaskCreateModal({ onClose, teamId, columnId }: TaskCreateModalProps) {
     description: "",
   });
 
-  // Injecting columnId into the action
-  const createTaskWithId = createTaskAction.bind(null, columnId);
-
-  const [state, action, isPending] = useActionState(createTaskWithId, {
-    title: "",
-    description: "",
-  });
-
   const handleClose = useCallback(() => {
     setIsClosing(true);
     setTimeout(() => {
@@ -60,6 +58,15 @@ function TaskCreateModal({ onClose, teamId, columnId }: TaskCreateModalProps) {
       onClose();
     }, 200);
   }, [onClose]);
+
+  // Injecting columnId into the action
+  const ctAction = createTaskAction.bind(null, columnId);
+  const createTaskWithId = ctAction.bind(null, handleClose);
+
+  const [state, action, isPending] = useActionState(createTaskWithId, {
+    title: "",
+    description: "",
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

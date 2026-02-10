@@ -8,6 +8,8 @@ import TaskCreateModal from "./modals/TaskCreateModal";
 import Task from "./Task";
 import { TaskType } from "@/app/_extra/interfaces/task.interface";
 import api from "@/app/_extra/api/api";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 const fixedColumns = ["To Do", "In Progress", "Done"];
 
@@ -20,13 +22,18 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const { data } = await api.get(`/task-column/${id}`);
+        const { data }: { data: TaskType[] } = await api.get(`/task/${id}`);
         setTasks(data);
-      } catch (error) {
-        console.error("Error fetching tasks:", error);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          toast.error(error.response?.data.message);
+        } else {
+          toast.error("Unexpected error fetching tasks");
+        }
       }
     };
-    fetchTasks();
+
+    void fetchTasks();
   }, [id]);
 
   return (
@@ -56,9 +63,9 @@ function TaskColumn({ id, name, color, position, teamId }: TaskColumnType) {
           </div>
         </div>
         <div className="flex flex-col flex-1 gap-2 p-2">
-          {tasks.map((task) => (
-            <Task key={task.id} task={task} />
-          ))}
+          {tasks.map((task) => {
+            return <Task key={task.id} task={task} />;
+          })}
         </div>
         <button
           className="flex items-center gap-2 px-4 py-3 border-slate-700 border-t hover:cursor-pointer"

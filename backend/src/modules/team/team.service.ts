@@ -16,12 +16,14 @@ import { UpdateTeamDto } from './dto/update-team.dto';
 import { Team } from './entities/team.entity';
 import { User } from '../user/entities/user.entity';
 import { UserDTO } from '../user/dto/user-dto';
+import { TaskColumnService } from '../task-column/task-column.service';
 
 @Injectable()
 export class TeamService {
   constructor(
     @InjectRepository(Team) private repo: Repository<Team>,
     @InjectRepository(User) private userRepo: Repository<User>,
+    private taskColumnService: TaskColumnService,
     private jwtService: JwtService,
   ) {}
 
@@ -41,6 +43,18 @@ export class TeamService {
       });
 
       const dbTeam = await this.repo.save(team);
+
+      const defaultColumns = [
+        { name: 'To Do', color: '#ef4444', teamId: dbTeam.id },
+        { name: 'In Progress', color: '#eab308', teamId: dbTeam.id },
+        { name: 'Done', color: '#22c55e', teamId: dbTeam.id },
+      ];
+
+      await Promise.all(
+        defaultColumns.map((column) => {
+          return this.taskColumnService.create(column);
+        }),
+      );
 
       return plainToInstance(TeamDTO, dbTeam);
     } catch (error: unknown) {

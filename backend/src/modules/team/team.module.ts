@@ -6,9 +6,14 @@ import { Team } from './entities/team.entity';
 import { TeamController } from './team.controller';
 import { TeamService } from './team.service';
 import { User } from '../user/entities/user.entity';
+import { TaskColumnModule } from '../task-column/task-column.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Team, User]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([Team, User]),
+    UserModule,
+    TaskColumnModule,
+  ],
   controllers: [TeamController],
   providers: [TeamService, JwtService],
   exports: [TeamService],
